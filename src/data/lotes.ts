@@ -121,8 +121,7 @@ export const lotes: Lote[] = [
     cantidadInicial: 60,
     cantidadActual: 34,
     estado: 'ACTIVO'
-  }
-];
+  },
   {
     "id": "LOTE000001",
     "numeroLote": "L000002",

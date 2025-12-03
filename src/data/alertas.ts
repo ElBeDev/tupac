@@ -1,4 +1,4 @@
-// Mock data para demostración - Fecha del sistema: 03/05/2018
+// Mock data para demostración - Fecha del sistema: 03/12/2025
 import type { Alerta } from '../types';
 
 export const alertas: Alerta[] = [
@@ -8,9 +8,9 @@ export const alertas: Alerta[] = [
     productoId: 'prod-001',
     productoNombre: 'Aceite Girasol 1.5L',
     nivelPrioridad: 'CRITICA',
-    mensaje: 'STOCK AGOTADO: Aceite Girasol 1.5L - Stock en CERO. Reabastecer urgente.',
+    mensaje: 'STOCK CRÍTICO: Aceite Girasol 1.5L - Stock actual: 5 unidades, Mínimo: 25. Reabastecer urgente.',
     leida: false,
-    fechaAlerta: '2018-05-03'
+    fechaAlerta: '2025-12-03'
   },
   {
     id: 'alert-002',
@@ -20,41 +20,43 @@ export const alertas: Alerta[] = [
     nivelPrioridad: 'ALTA',
     mensaje: 'Stock Bajo: Arroz Largo Fino 1kg - Stock actual: 12, Mínimo: 25',
     leida: false,
-    fechaAlerta: '2018-05-03'
+    fechaAlerta: '2025-12-03'
   },
   {
     id: 'alert-003',
     tipo: 'VENCIMIENTO_PROXIMO',
-    productoId: 'prod-005',
-    productoNombre: 'Pan Lactal Blanco',
-    loteId: 'lote-003',
-    loteNumero: 'L-2018-0420',
+    productoId: 'prod-010',
+    productoNombre: 'Yogur Entero 1kg',
+    loteId: 'lote-002',
+    loteNumero: 'L-2025-1128',
     nivelPrioridad: 'CRITICA',
-    mensaje: 'Vence en 2 días: Lote L-2018-0420 de Pan Lactal Blanco - 45 unidades',
+    mensaje: 'Vence en 3 días: Lote L-2025-1128 de Yogur Entero 1kg - 38 unidades. Revisar stock.',
     leida: false,
-    fechaAlerta: '2018-05-03'
+    fechaAlerta: '2025-12-03'
   },
   {
     id: 'alert-004',
     tipo: 'VENCIMIENTO_PROXIMO',
-    productoId: 'prod-010',
-    productoNombre: 'Yogur Entero 1kg',
-    loteId: 'lote-002',
-    loteNumero: 'L-2018-0428',
+    productoId: 'prod-005',
+    productoNombre: 'Pan Lactal Blanco',
+    loteId: 'lote-003',
+    loteNumero: 'L-2025-1201',
     nivelPrioridad: 'ALTA',
-    mensaje: 'Vence en 5 días: Lote L-2018-0428 de Yogur Entero 1kg - 38 unidades',
+    mensaje: 'Vence en 5 días: Lote L-2025-1201 de Pan Lactal Blanco - 45 unidades',
     leida: false,
-    fechaAlerta: '2018-05-02'
+    fechaAlerta: '2025-12-03'
   },
   {
     id: 'alert-005',
-    tipo: 'STOCK_BAJO',
+    tipo: 'VENCIMIENTO_PROXIMO',
     productoId: 'prod-004',
     productoNombre: 'Leche Entera 1L',
-    nivelPrioridad: 'MEDIA',
-    mensaje: 'Stock Bajo: Leche Entera 1L - Stock actual: 32, Mínimo: 50',
+    loteId: 'lote-001',
+    loteNumero: 'L-2025-1125',
+    nivelPrioridad: 'ALTA',
+    mensaje: 'Vence en 7 días: Lote L-2025-1125 de Leche Entera 1L - 32 unidades',
     leida: false,
-    fechaAlerta: '2018-05-02'
+    fechaAlerta: '2025-12-02'
   },
   {
     id: 'alert-006',
@@ -64,16 +66,16 @@ export const alertas: Alerta[] = [
     nivelPrioridad: 'MEDIA',
     mensaje: 'Stock Bajo: Papas Fritas 150g - Stock actual: 48, Mínimo: 60',
     leida: false,
-    fechaAlerta: '2018-05-01'
+    fechaAlerta: '2025-12-02'
   },
   {
     id: 'alert-007',
     tipo: 'STOCK_BAJO',
-    productoId: 'prod-003',
-    productoNombre: 'Coca Cola 2.25L',
-    nivelPrioridad: 'BAJA',
-    mensaje: 'Stock cerca del mínimo: Coca Cola 2.25L - Stock actual: 54, Mínimo: 30',
-    leida: true,
-    fechaAlerta: '2018-04-30'
+    productoId: 'prod-004',
+    productoNombre: 'Leche Entera 1L',
+    nivelPrioridad: 'MEDIA',
+    mensaje: 'Stock Bajo: Leche Entera 1L - Stock actual: 32, Mínimo: 50',
+    leida: false,
+    fechaAlerta: '2025-12-01'
   }
 ];

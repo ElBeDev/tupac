@@ -24,7 +24,7 @@ export const useAlertaStore = create<AlertaState>()(
       generarAlertas: () => {
         const alertasGeneradas: Alerta[] = [];
         let alertaId = 1;
-        const fechaActual = new Date('2018-05-03'); // Fecha del sistema
+        const fechaActual = new Date('2025-12-03'); // Fecha del sistema
 
         // Obtener datos desde otros stores
         const productos = useStore.getState().productos;

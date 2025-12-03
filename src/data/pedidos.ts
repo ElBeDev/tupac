@@ -4,11 +4,11 @@ import type { OrdenCompra } from '../types/ordenCompra';
 export const ordenesCompraIniciales: OrdenCompra[] = [
   {
     id: 'oc-001',
-    numeroOrden: 'OC-2024-0001',
+    numeroOrden: 'OC-2025-0001',
     proveedorId: 'prov-001',
     proveedorNombre: 'Distribuidora Central SA',
-    fecha: '2024-11-20',
-    fechaEntregaEstimada: '2024-11-22',
+    fecha: '2025-11-20',
+    fechaEntregaEstimada: '2025-11-22',
     estado: 'Recibida Completa',
     items: [
       {
@@ -26,18 +26,18 @@ export const ordenesCompraIniciales: OrdenCompra[] = [
     total: 75625.00,
     observaciones: 'Entrega completada',
     generadaAutomaticamente: false,
-    fechaEnvio: '2024-11-20',
-    fechaRecepcion: '2024-11-22',
+    fechaEnvio: '2025-11-20',
+    fechaRecepcion: '2025-11-22',
     createdBy: 'admin',
-    createdAt: '2024-11-20T10:00:00'
+    createdAt: '2025-11-20T10:00:00'
   },
   {
     id: 'oc-002',
-    numeroOrden: 'OC-2024-0002',
+    numeroOrden: 'OC-2025-0002',
     proveedorId: 'prov-003',
     proveedorNombre: 'Coca Cola FEMSA',
-    fecha: '2024-11-25',
-    fechaEntregaEstimada: '2024-11-26',
+    fecha: '2025-11-25',
+    fechaEntregaEstimada: '2025-11-26',
     estado: 'Recibida Completa',
     items: [
       {
@@ -55,18 +55,18 @@ export const ordenesCompraIniciales: OrdenCompra[] = [
     total: 142296.00,
     observaciones: 'Entrega puntual',
     generadaAutomaticamente: false,
-    fechaEnvio: '2024-11-25',
-    fechaRecepcion: '2024-11-26',
+    fechaEnvio: '2025-11-25',
+    fechaRecepcion: '2025-11-26',
     createdBy: 'admin',
-    createdAt: '2024-11-25T08:30:00'
+    createdAt: '2025-11-25T08:30:00'
   },
   {
     id: 'oc-003',
-    numeroOrden: 'OC-2024-0003',
+    numeroOrden: 'OC-2025-0003',
     proveedorId: 'prov-002',
     proveedorNombre: 'Molino San José',
-    fecha: '2024-11-27',
-    fechaEntregaEstimada: '2024-12-02',
+    fecha: '2025-11-27',
+    fechaEntregaEstimada: '2025-12-02',
     estado: 'Confirmada',
     items: [
       {
@@ -93,18 +93,18 @@ export const ordenesCompraIniciales: OrdenCompra[] = [
     total: 131890.00,
     observaciones: 'Pendiente de entrega',
     generadaAutomaticamente: true,
-    fechaEnvio: '2024-11-27',
+    fechaEnvio: '2025-11-27',
     fechaRecepcion: undefined,
     createdBy: 'sistema',
-    createdAt: '2024-11-27T15:00:00'
+    createdAt: '2025-11-27T15:00:00'
   },
   {
     id: 'oc-004',
-    numeroOrden: 'OC-2024-0004',
+    numeroOrden: 'OC-2025-0004',
     proveedorId: 'prov-004',
     proveedorNombre: 'Mastellone Hermanos SA',
-    fecha: '2024-11-28',
-    fechaEntregaEstimada: '2024-11-30',
+    fecha: '2025-11-28',
+    fechaEntregaEstimada: '2025-11-30',
     estado: 'Enviada',
     items: [
       {
@@ -131,9 +131,9 @@ export const ordenesCompraIniciales: OrdenCompra[] = [
     total: 236192.00,
     observaciones: 'En tránsito',
     generadaAutomaticamente: true,
-    fechaEnvio: '2024-11-28',
+    fechaEnvio: '2025-11-28',
     fechaRecepcion: undefined,
     createdBy: 'sistema',
-    createdAt: '2024-11-28T09:00:00'
+    createdAt: '2025-11-28T09:00:00'
   }
 ];

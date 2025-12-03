@@ -27,7 +27,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Cliente preferencial, excelente historial de pagos',
     fechaAlta: '2023-01-15',
-    ultimaCompra: '2024-11-28',
+    ultimaCompra: '2025-11-28',
     totalComprado: 2850000
   },
   {
@@ -55,7 +55,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Cliente regular con buena rotación',
     fechaAlta: '2023-03-20',
-    ultimaCompra: '2024-11-30',
+    ultimaCompra: '2025-11-30',
     totalComprado: 1250000
   },
   {
@@ -83,7 +83,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Cliente pequeño pero constante',
     fechaAlta: '2023-06-10',
-    ultimaCompra: '2024-12-01',
+    ultimaCompra: '2025-12-01',
     totalComprado: 385000
   },
   {
@@ -111,7 +111,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Distribuidor regional, volúmenes importantes',
     fechaAlta: '2022-11-05',
-    ultimaCompra: '2024-11-29',
+    ultimaCompra: '2025-11-29',
     totalComprado: 5450000
   },
   {
@@ -139,7 +139,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Cliente con buen potencial de crecimiento',
     fechaAlta: '2023-08-12',
-    ultimaCompra: '2024-11-27',
+    ultimaCompra: '2025-11-27',
     totalComprado: 890000
   },
   {
@@ -166,8 +166,8 @@ export const clientes: Cliente[] = [
     listaPrecio: 'Minorista',
     activo: true,
     notas: 'Cliente nuevo, sin historial crediticio',
-    fechaAlta: '2024-11-01',
-    ultimaCompra: '2024-11-15',
+    fechaAlta: '2025-11-01',
+    ultimaCompra: '2025-11-15',
     totalComprado: 45000
   },
   {
@@ -195,7 +195,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Cliente estable, pedidos quincenales',
     fechaAlta: '2023-04-18',
-    ultimaCompra: '2024-11-26',
+    ultimaCompra: '2025-11-26',
     totalComprado: 1680000
   },
   {
@@ -223,7 +223,7 @@ export const clientes: Cliente[] = [
     activo: true,
     notas: 'Excelente cliente, siempre al día con pagos',
     fechaAlta: '2022-09-22',
-    ultimaCompra: '2024-12-01',
+    ultimaCompra: '2025-12-01',
     totalComprado: 3250000
   }
 ];

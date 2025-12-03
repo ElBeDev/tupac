@@ -33,7 +33,7 @@ export const useLoteStore = create<LoteState>()(
       },
 
       obtenerLotesProximosVencer: (dias: number) => {
-        const hoy = new Date('2018-05-03'); // Fecha del sistema
+        const hoy = new Date('2025-12-03'); // Fecha del sistema
         const limite = new Date(hoy);
         limite.setDate(limite.getDate() + dias);
 

@@ -5,9 +5,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-001',
     tipo: 'ENTRADA',
-    fecha: '2024-11-22',
+    fecha: '2025-11-22',
     hora: '10:00',
-    numeroComprobante: 'OC-2024-0001',
+    numeroComprobante: 'OC-2025-0001',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Distribuidora Central SA',
     items: [
@@ -29,9 +29,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-002',
     tipo: 'ENTRADA',
-    fecha: '2024-11-26',
+    fecha: '2025-11-26',
     hora: '14:30',
-    numeroComprobante: 'OC-2024-0002',
+    numeroComprobante: 'OC-2025-0002',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Coca Cola FEMSA',
     items: [
@@ -53,7 +53,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-003',
     tipo: 'SALIDA',
-    fecha: '2024-11-25',
+    fecha: '2025-11-25',
     hora: '10:30',
     numeroComprobante: 'FAC-0001',
     tipoComprobante: 'Factura B',
@@ -86,7 +86,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-004',
     tipo: 'SALIDA',
-    fecha: '2024-11-26',
+    fecha: '2025-11-26',
     hora: '14:15',
     numeroComprobante: 'FAC-0002',
     tipoComprobante: 'Factura B',
@@ -119,7 +119,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-005',
     tipo: 'AJUSTE',
-    fecha: '2024-11-28',
+    fecha: '2025-11-28',
     hora: '16:00',
     numeroComprobante: 'AJ-001',
     tipoComprobante: 'Ajuste',
@@ -144,7 +144,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-006',
     tipo: 'SALIDA',
-    fecha: '2024-11-27',
+    fecha: '2025-11-27',
     hora: '09:45',
     numeroComprobante: 'FAC-0003',
     tipoComprobante: 'Factura B',
@@ -177,7 +177,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-007',
     tipo: 'SALIDA',
-    fecha: '2024-11-30',
+    fecha: '2025-11-30',
     hora: '09:15',
     numeroComprobante: 'FAC-0008',
     tipoComprobante: 'Factura B',
@@ -210,7 +210,7 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-008',
     tipo: 'AJUSTE',
-    fecha: '2024-11-29',
+    fecha: '2025-11-29',
     hora: '17:30',
     numeroComprobante: 'AJ-002',
     tipoComprobante: 'Ajuste',
@@ -235,9 +235,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-009',
     tipo: 'ENTRADA',
-    fecha: '2024-11-15',
+    fecha: '2025-11-15',
     hora: '09:00',
-    numeroComprobante: 'OC-2024-NOV-01',
+    numeroComprobante: 'OC-2025-NOV-01',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Molino San José',
     items: [
@@ -268,9 +268,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-010',
     tipo: 'ENTRADA',
-    fecha: '2024-11-18',
+    fecha: '2025-11-18',
     hora: '11:30',
-    numeroComprobante: 'OC-2024-NOV-02',
+    numeroComprobante: 'OC-2025-NOV-02',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Danone Argentina',
     items: [
@@ -292,9 +292,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-011',
     tipo: 'ENTRADA',
-    fecha: '2024-11-20',
+    fecha: '2025-11-20',
     hora: '14:00',
-    numeroComprobante: 'OC-2024-NOV-03',
+    numeroComprobante: 'OC-2025-NOV-03',
     tipoComprobante: 'Orden de Compra',
     entidad: 'PepsiCo Argentina',
     items: [
@@ -316,9 +316,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-012',
     tipo: 'ENTRADA',
-    fecha: '2024-11-15',
+    fecha: '2025-11-15',
     hora: '10:30',
-    numeroComprobante: 'OC-2024-NOV-04',
+    numeroComprobante: 'OC-2025-NOV-04',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Unilever Argentina',
     items: [
@@ -340,9 +340,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-013',
     tipo: 'ENTRADA',
-    fecha: '2024-11-15',
+    fecha: '2025-11-15',
     hora: '08:00',
-    numeroComprobante: 'OC-2024-NOV-05',
+    numeroComprobante: 'OC-2025-NOV-05',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Distribuidora Central SA',
     items: [
@@ -364,9 +364,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-014',
     tipo: 'ENTRADA',
-    fecha: '2024-11-28',
+    fecha: '2025-11-28',
     hora: '09:00',
-    numeroComprobante: 'OC-2024-NOV-06',
+    numeroComprobante: 'OC-2025-NOV-06',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Panificadora del Norte',
     items: [
@@ -388,9 +388,9 @@ export const movimientos: Movimiento[] = [
   {
     id: 'mov-015',
     tipo: 'ENTRADA',
-    fecha: '2024-11-26',
+    fecha: '2025-11-26',
     hora: '10:00',
-    numeroComprobante: 'OC-2024-NOV-07',
+    numeroComprobante: 'OC-2025-NOV-07',
     tipoComprobante: 'Orden de Compra',
     entidad: 'Sancor CUL',
     items: [

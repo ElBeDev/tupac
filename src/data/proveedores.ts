@@ -30,7 +30,7 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Proveedor principal de almacén',
     fechaAlta: '2022-01-10',
-    ultimaCompra: '2024-11-28'
+    ultimaCompra: '2025-11-28'
   },
   {
     id: 'prov-002',
@@ -58,7 +58,7 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Especializado en harinas y pastas',
     fechaAlta: '2022-03-15',
-    ultimaCompra: '2024-11-25'
+    ultimaCompra: '2025-11-25'
   },
   {
     id: 'prov-003',
@@ -86,7 +86,7 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Entrega diaria, excelente servicio',
     fechaAlta: '2022-01-20',
-    ultimaCompra: '2024-12-01'
+    ultimaCompra: '2025-12-01'
   },
   {
     id: 'prov-004',
@@ -114,7 +114,7 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Lácteos frescos de calidad',
     fechaAlta: '2022-02-01',
-    ultimaCompra: '2024-11-30'
+    ultimaCompra: '2025-11-30'
   },
   {
     id: 'prov-005',
@@ -142,7 +142,7 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Productos de limpieza y cuidado personal',
     fechaAlta: '2022-04-10',
-    ultimaCompra: '2024-11-27'
+    ultimaCompra: '2025-11-27'
   },
   {
     id: 'prov-006',
@@ -170,6 +170,6 @@ export const proveedores: Proveedor[] = [
     activo: true,
     notas: 'Snacks y bebidas de marca',
     fechaAlta: '2022-05-12',
-    ultimaCompra: '2024-11-29'
+    ultimaCompra: '2025-11-29'
   }
 ];

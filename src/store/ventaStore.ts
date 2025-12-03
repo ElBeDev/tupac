@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Venta, ItemVenta, CarritoItem } from '../types/venta';
-import { facturasReales } from '../data/facturas-reales';
+import { ventasIniciales } from '../data/ventas-iniciales';
 import { useStore } from '../stores/useStore';
 import { useClienteStore } from './clienteStore';
 
@@ -44,43 +44,10 @@ interface VentaStore {
   getTopProductosVendidos: (limit?: number) => Array<{ productoId: string; productoNombre: string; cantidad: number; total: number }>;
 }
 
-// Convertir facturas reales a formato Venta
-const convertirFacturasAVentas = (): Venta[] => {
-  return facturasReales.map((factura) => ({
-    id: factura.id,
-    numeroFactura: factura.numero,
-    clienteId: factura.codigoCliente,
-    clienteNombre: factura.cliente,
-    fecha: factura.fecha,
-    tipoFactura: factura.tipo === 'Nota de Crédito' ? 'C' as const : 'B' as const,
-    items: factura.items.map((item) => ({
-      productoId: item.codigo,
-      productoNombre: item.nombre,
-      codigoBarras: item.codigo,
-      cantidad: item.cantidad,
-      precioUnitario: item.precioUnitario,
-      descuento: 0,
-      alicuotaIva: 21,
-      subtotal: item.subtotal,
-    })),
-    subtotal: factura.subtotal,
-    descuentoGlobal: 0,
-    iva21: factura.iva,
-    iva105: 0,
-    total: factura.total,
-    metodoPago: factura.total > 50000 ? 'Transferencia' as const : 'Efectivo' as const,
-    estado: factura.estado as Venta['estado'],
-    observaciones: '',
-    vendedor: 'Sistema',
-    createdAt: factura.fecha,
-    createdBy: 'sistema',
-  }));
-};
-
 export const useVentaStore = create<VentaStore>()(
   persist(
     (set, get) => ({
-      ventas: convertirFacturasAVentas(),
+      ventas: ventasIniciales,
       carrito: [],
       clienteSeleccionado: null,
       descuentoGlobal: 0,

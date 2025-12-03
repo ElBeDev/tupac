@@ -7,7 +7,7 @@ export const ventasIniciales: Venta[] = [
     numeroFactura: 'FAC-0001',
     clienteId: 'cli-001',
     clienteNombre: 'Almacén Don Pedro',
-    fecha: '2024-11-25',
+    fecha: '2018-04-25',
     hora: '10:30',
     tipoFactura: 'B',
     items: [
@@ -52,14 +52,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-11-25T10:30:00'
+    createdAt: '2018-04-25T10:30:00'
   },
   {
     id: 'vta-002',
     numeroFactura: 'FAC-0002',
     clienteId: 'cli-003',
     clienteNombre: 'Kiosco La Esquina',
-    fecha: '2024-11-26',
+    fecha: '2018-04-26',
     hora: '14:15',
     tipoFactura: 'B',
     items: [
@@ -102,16 +102,16 @@ export const ventasIniciales: Venta[] = [
     estado: 'Pagada',
     observaciones: '',
     vendedor: 'Sistema',
-    fechaPago: '2024-11-26',
+    fechaPago: '2018-04-26',
     createdBy: 'admin',
-    createdAt: '2024-11-26T14:15:00'
+    createdAt: '2018-04-26T14:15:00'
   },
   {
     id: 'vta-003',
     numeroFactura: 'FAC-0003',
     clienteId: 'cli-002',
     clienteNombre: 'Súper Economía',
-    fecha: '2024-11-27',
+    fecha: '2018-04-27',
     hora: '09:45',
     tipoFactura: 'B',
     items: [
@@ -156,14 +156,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-11-27T09:45:00'
+    createdAt: '2018-04-27T09:45:00'
   },
   {
     id: 'vta-004',
     numeroFactura: 'FAC-0004',
     clienteId: 'cli-004',
     clienteNombre: 'Distribuidora Norte',
-    fecha: '2024-11-27',
+    fecha: '2018-04-27',
     hora: '11:20',
     tipoFactura: 'A',
     items: [
@@ -208,14 +208,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-11-27T11:20:00'
+    createdAt: '2018-04-27T11:20:00'
   },
   {
     id: 'vta-005',
     numeroFactura: 'FAC-0005',
     clienteId: 'cli-005',
     clienteNombre: 'Minimarket Central',
-    fecha: '2024-11-28',
+    fecha: '2018-04-28',
     hora: '08:30',
     tipoFactura: 'B',
     items: [
@@ -258,16 +258,16 @@ export const ventasIniciales: Venta[] = [
     estado: 'Pagada',
     observaciones: '',
     vendedor: 'Sistema',
-    fechaPago: '2024-11-28',
+    fechaPago: '2018-04-28',
     createdBy: 'admin',
-    createdAt: '2024-11-28T08:30:00'
+    createdAt: '2018-04-28T08:30:00'
   },
   {
     id: 'vta-006',
     numeroFactura: 'FAC-0006',
     clienteId: 'cli-006',
     clienteNombre: 'Despensa La Moderna',
-    fecha: '2024-11-28',
+    fecha: '2018-04-28',
     hora: '15:45',
     tipoFactura: 'B',
     items: [
@@ -310,16 +310,16 @@ export const ventasIniciales: Venta[] = [
     estado: 'Pagada',
     observaciones: 'Cliente nuevo',
     vendedor: 'Sistema',
-    fechaPago: '2024-11-28',
+    fechaPago: '2018-04-28',
     createdBy: 'admin',
-    createdAt: '2024-11-28T15:45:00'
+    createdAt: '2018-04-28T15:45:00'
   },
   {
     id: 'vta-007',
     numeroFactura: 'FAC-0007',
     clienteId: 'cli-007',
     clienteNombre: 'Almacén El Progreso',
-    fecha: '2024-11-29',
+    fecha: '2018-04-29',
     hora: '10:00',
     tipoFactura: 'B',
     items: [
@@ -364,14 +364,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-11-29T10:00:00'
+    createdAt: '2018-04-29T10:00:00'
   },
   {
     id: 'vta-008',
     numeroFactura: 'FAC-0008',
     clienteId: 'cli-008',
     clienteNombre: 'Autoservicio Las Flores',
-    fecha: '2024-11-30',
+    fecha: '2018-04-30',
     hora: '09:15',
     tipoFactura: 'B',
     items: [
@@ -416,14 +416,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-11-30T09:15:00'
+    createdAt: '2018-04-30T09:15:00'
   },
   {
     id: 'vta-009',
     numeroFactura: 'FAC-0009',
     clienteId: 'cli-001',
     clienteNombre: 'Almacén Don Pedro',
-    fecha: '2024-12-01',
+    fecha: '2018-05-01',
     hora: '11:30',
     tipoFactura: 'B',
     items: [
@@ -468,14 +468,14 @@ export const ventasIniciales: Venta[] = [
     vendedor: 'Sistema',
     fechaPago: undefined,
     createdBy: 'admin',
-    createdAt: '2024-12-01T11:30:00'
+    createdAt: '2018-05-01T11:30:00'
   },
   {
     id: 'vta-010',
     numeroFactura: 'FAC-0010',
     clienteId: 'cli-002',
     clienteNombre: 'Súper Economía',
-    fecha: '2024-12-01',
+    fecha: '2018-05-01',
     hora: '14:20',
     tipoFactura: 'B',
     items: [
@@ -518,8 +518,8 @@ export const ventasIniciales: Venta[] = [
     estado: 'Pagada',
     observaciones: 'Pago inmediato',
     vendedor: 'Sistema',
-    fechaPago: '2024-12-01',
+    fechaPago: '2018-05-01',
     createdBy: 'admin',
-    createdAt: '2024-12-01T14:20:00'
+    createdAt: '2018-05-01T14:20:00'
   }
 ];

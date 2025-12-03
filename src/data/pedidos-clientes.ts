@@ -4,8 +4,8 @@ import type { PedidoCliente } from '../types/pedido-cliente';
 export const pedidosClientes: PedidoCliente[] = [
   {
     id: 'ped-001',
-    fechaPedido: '2024-12-02',
-    fechaEntrega: '2024-12-03',
+    fechaPedido: '2025-12-01',
+    fechaEntrega: '2025-12-02',
     clienteId: 'cli-005',
     clienteNombre: 'Minimarket Central',
     telefono: '011-4555-1234',
@@ -13,7 +13,7 @@ export const pedidosClientes: PedidoCliente[] = [
     estado: 'pendiente',
     observaciones: 'Entrega mañana temprano',
     usuarioCarga: 'admin',
-    fechaCarga: '2024-12-02',
+    fechaCarga: '2025-12-01',
     horaCarga: '09:30',
     items: [
       {
@@ -45,8 +45,8 @@ export const pedidosClientes: PedidoCliente[] = [
   },
   {
     id: 'ped-002',
-    fechaPedido: '2024-12-02',
-    fechaEntrega: '2024-12-04',
+    fechaPedido: '2025-12-01',
+    fechaEntrega: '2025-12-03',
     clienteId: 'cli-007',
     clienteNombre: 'Almacén El Progreso',
     telefono: '011-4555-7890',
@@ -54,7 +54,7 @@ export const pedidosClientes: PedidoCliente[] = [
     estado: 'completado',
     observaciones: 'Pedido semanal',
     usuarioCarga: 'ventas',
-    fechaCarga: '2024-12-02',
+    fechaCarga: '2025-12-01',
     horaCarga: '10:15',
     items: [
       {
@@ -86,8 +86,8 @@ export const pedidosClientes: PedidoCliente[] = [
   },
   {
     id: 'ped-003',
-    fechaPedido: '2024-12-02',
-    fechaEntrega: '2024-12-05',
+    fechaPedido: '2025-12-01',
+    fechaEntrega: '2025-12-04',
     clienteId: 'cli-004',
     clienteNombre: 'Distribuidora Norte',
     telefono: '011-4555-4567',
@@ -95,7 +95,7 @@ export const pedidosClientes: PedidoCliente[] = [
     estado: 'completado',
     observaciones: 'Pedido grande distribuidor',
     usuarioCarga: 'admin',
-    fechaCarga: '2024-12-02',
+    fechaCarga: '2025-12-01',
     horaCarga: '11:00',
     items: [
       {

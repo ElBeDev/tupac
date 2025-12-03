@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Lote } from '../types';
-import { lotesReales } from '../data/lotes-reales';
+import { lotes as lotesReales } from '../data/lotes';
 
 interface LoteState {
   lotes: Lote[];

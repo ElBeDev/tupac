@@ -85,8 +85,7 @@ export const alertas: Alerta[] = [
     mensaje: 'Stock cerca del mínimo: 54 unidades (mínimo: 30)',
     leida: true,
     fechaAlerta: '2024-11-28'
-  }
-];
+  },
   {
     "id": "ALT000001",
     "tipo": "STOCK_CRITICO",

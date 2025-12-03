@@ -1,0 +1,4640 @@
+INTERFAS DE PRECIOS
+
+schema forumpre					descr "Administración de Precios     "
+								language "C";
+
+//
+// Parámetros de control general del módulo de precios.
+//
+table gralpre					descr "Parámetro Control General     "
+{
+	gpl_ver			num(4)			descr "Versión                       "
+									>=0 
+									not null,
+	gpl_tcomp		char(1)			descr "Tipo de Entidad del Competidor"
+									default 'k'
+									not null,
+	gpl_tlicomp		num(2)			descr "Lista de Precio del Competidor"
+									in tlista:(tli_dtli)
+									default 0
+									not null,
+	gpl_tprcomp		num(2)			descr "Código de Precio del Competidor"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprcto		num(2)			descr "Código de Precio de Costo     "
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprpcto		num(2)			descr "Código de Precio Promedio de Costo"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvta		num(2)			descr "Código de Precio de Venta Contado"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvtaof	num(2)			descr "Código de Precio de Venta Oferta	"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvtapl	num(2)			descr "Código de Precio de Venta Plazo	"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvtaes	num(2)			descr "Código de Precio de Venta Especial"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tpriint		num(2)			descr "Código de Precio P/Imp.Interno"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprov		char(1)			descr "Tipo de Entidad  del Proveedor"
+									default 'P'
+									not null,
+	gpl_tprprov		num(2)			descr "Código de precio del Proveedor"
+									in ctippre:(ctp_dtpre)
+									default 0
+									not null,
+	gpl_tprvtacl	num(2)			descr "Código de Precio de Venta Especial"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tagries		num(4)			descr "Tipo de Agenda p/Riesgo Precios   "
+									in tagenda:(tag_dage),
+	gpl_tprvtaof1	num(2)			descr "Código de Precio de Venta Oferta	1"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvtaof2	num(2)			descr "Código de Precio de Venta Oferta	2"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprvtaof3	num(2)			descr "Código de Precio de Venta Oferta	3"
+									in ctippre:(ctp_dtpre)
+									default 0,
+	gpl_tprprof		num(2)			descr "Código de precio Proveedor futuro"
+									in ctippre:(ctp_dtpre)
+									default 0
+									not null,
+	gpl_manprec		char(1)			descr "Manejo Precio Con o Sin Iva"
+									,
+	gpl_tpriif		num(2)			descr "Código de precio Imp.Interno Fijo "
+									in ctippre:(ctp_dtpre)
+									,
+}
+primary key ( gpl_ver );
+
+//
+// Autorización de usuarios
+//
+table autpre					descr "Autorizaciónes p/Usuario      "
+{
+	pau_ver		num(2)			descr "Versión                       "
+								default 0 
+								between 0 and 0 
+								not null,
+	pau_usu		char(15)		descr "Usuario autorizado            "
+								not null,
+ /* Permisos otorgados para modificar */
+	pau_padm	bool			descr "Permite administrar?          "
+								default false not null
+								,
+	pau_ptli	char(1)			descr "Habilitación de listas        "
+								in ("T":"Todas",
+									"A":"Algunas")
+								default "T",
+	pau_htli[5]	num(2)			descr "Listas habilitadas            "
+								in tlista:(tli_dtli)
+								,
+	pau_ptpre	char(1)			descr "Habilitación de tipo de precio"
+								in ("T":"Todas",
+									"A":"Algunas")
+								default "T",
+	pau_htpre[5]	num(2)		descr "Tipos de precios habilitados  "
+								in ctippre:(ctp_dtpre)
+								,
+}
+primary key ( pau_ver , pau_usu );
+
+//
+// Lista de precios
+//
+table tlista					descr "Tipo de Lista                 "
+{
+	tli_tli		num(2)			descr "Código de lista de precios    "
+								not null,
+	tli_dtli	char(30)		descr "Descripción                   "
+								,
+	tli_drtli	char(10)		descr "Descripción reducida          "
+								,
+}
+primary key ( tli_tli );
+
+//
+// Tipo de precios.
+//
+table ctippre					descr "Tipos de Precios              "
+{
+	ctp_tpre	num(2)			descr "Código de precio              "
+								>0 not null,
+	ctp_dtpre	char(30)		descr "Descripción                   "
+								,
+	ctp_drtpre	char(10)		descr "Descripción reducida          "
+								,
+	ctp_ment	char(1)			descr "Modo de entidad               "
+								in ("E":"Por entidad",
+									"G":"Genérico   ")
+								default "G"
+								not null,
+	ctp_tenti	char(1)			descr "Tipo Entidad Default          "
+								,
+	ctp_tcv1	num(2)			descr "Tipo Campo Versus 1           "
+								,
+	ctp_tcv2	num(2)			descr "Tipo Campo Versus 2           "
+								,
+	ctp_tpreb	num(3)			descr "Tipo de precio base           "
+								,
+	ctp_tprep	num(5,2)		descr "Porcentaje sobre precio base  "
+								,
+	ctp_mvili	bool			descr "Marca de vigencia limitada    "
+								not null
+								default false
+								,								
+}
+primary key ( ctp_tpre );
+
+//
+// Habilitación de listas para el tipo de precios
+//
+table dtippre					descr "Tipos de Precios              "
+{
+	dtp_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								>0 not null,
+	dtp_tli		num(2)			descr "Código de lista de precios    "
+								in tlista:(tli_dtli)
+								not null,
+}
+primary key ( dtp_tpre , dtp_tli );
+
+//
+// Datos genéricos de precios por lista.
+//
+table cprecio					descr "Cabecera de Precios           "
+{
+	cpr_art		num(9)			descr "Artículo                      "
+								not null,
+	cpr_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+								
+/* categorización del artículo para calculo de categoría de rentabilidad */
+	cpr_tcatr	char(1)			descr "Tipo de categorización        "
+								in ("M":"Manual    ",
+									"A":"Automática")
+								default "A"
+								,
+	cpr_catr 	num(2)			descr "Categoría                     "
+						 		default 1,
+	cpr_fcatr	date			descr "Fecha vencimiento manual      "
+				  				default today,
+
+/* retorno estimado */
+	cpr_pret	num(5,2)		descr "Porcentaje de retorno estimado"
+								default 0.0,
+	cpr_fpret	date			descr "Fecha de vencimiento retorno  "
+								default today,
+	cpr_est		char(1)			descr "Estado Operativo              "
+								default "A",
+	cpr_catc	num(2)			descr "Categoría de Comisión         "
+						 		default 1,
+	cpr_porcp	num(5,2)		descr "Porcentaje en Promocion ?     "
+						 		default 0,
+}
+primary key ( cpr_art , cpr_tli ),
+index porlista ( cpr_tli , cpr_art );
+
+//
+// Valores de precios por tipo y lista.
+//
+table dprecio					descr "Valores de Precios            "
+{
+	dpr_art		num(9)			descr "Artículo                      "
+								not null,
+	dpr_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+ 	dpr_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								not null,        
+	dpr_fvig	date			descr "Fecha de vigencia             "
+								default today
+								not null,
+	dpr_hvig	time			descr "Hora de vigencia              "
+								default hour
+								not null,
+	dpr_enti	num(6)			descr "Entidad                       "
+								,
+	dpr_orden	num(6)			descr "Orden                         "
+								,
+	dpr_pval	num(9,4)		descr "Valor precio                  "
+								default 0
+								not null,
+	dpr_usua	char(15)		descr "Usuario                       "
+								,
+	dpr_fact	date			descr "Fecha                         "
+								,
+	dpr_hora	time			descr "Hora                          "
+								,
+	dpr_proc	char(10)		descr "Proceso que lo cambió         "
+								,
+	dpr_mtra	bool			descr "Transferido?                  "
+								default false,
+	dpr_obs		char(15)		descr "Observaciones                 "
+								,
+}
+primary key ( dpr_art , dpr_tli , dpr_tpre , dpr_fvig , dpr_hvig , dpr_enti )[41],
+index enti  ( dpr_art , dpr_tli , dpr_tpre , dpr_enti not null, dpr_fvig , dpr_hvig )[41],
+index rmxart( dpr_tli , dpr_tpre , dpr_art , dpr_fvig , dpr_hvig )[32],
+index rmxent( dpr_tli , dpr_tpre , dpr_enti not null, dpr_art , dpr_fvig , dpr_hvig )[41],
+index fvig  ( dpr_tli , dpr_tpre , dpr_fvig , dpr_art )[27],
+index fvigen( dpr_fvig, dpr_tli  , dpr_tpre , dpr_art )[27],
+index lispro( dpr_tli , dpr_tpre , dpr_enti not null, dpr_fvig , dpr_hvig,dpr_art )[41];
+
+//
+// Relacion entre Valores de precios por tipo y lista con Entidades.
+//
+table eprecio					descr "Valores de Precios por Entidad"
+{
+	epr_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+ 	epr_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								not null,        
+	epr_enti	num(6)			descr "Entidad                       "
+								,
+	epr_orden	num(6)			descr "Orden                         "
+								,
+	epr_art		num(9)			descr "Artículo                      "
+								not null, 
+	epr_bon1	num(5,2)		descr "Bonificaciones y descuentos 1"
+								default 0,
+   	epr_bon2	num(5,2)		descr "Bonificaciones y descuentos 2"
+								default 0,
+	epr_bon3	num(5,2)		descr "Bonificaciones y descuentos 3"
+								default 0,
+	epr_lle		num(5)			descr "Lleva"
+								,
+	epr_pag		num(5)			descr "Paga"
+								,
+	epr_bon4	num(5,2)		descr "Bonificaciones y descuentos 4"
+								default 0,
+	epr_pxcaj	num(10,2)		descr "Peso x Cajas               "
+								default 0.0,
+	epr_uxb		num(4)			descr "Unidad p/Bulto de Artículo "
+								,
+	epr_abon1[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 1"
+								default 0,
+   	epr_abon2[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 2"
+								default 0,
+	epr_abon3[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 3"
+								default 0,
+	epr_abon4[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 4"
+								default 0,
+	epr_bon5    num(5,2)        descr "Bonificaciones y descuentos"
+								default 0,
+	epr_bon6    num(5,2)        descr "Bonif. y descuentos p/fuera de FC"
+								default 0,
+	epr_abon5[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 6"
+								default 0,
+	epr_abon6[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 6"
+								default 0,
+	epr_bonnv		num(5,2)	descr "Bonificaciones No Volcadas al precio Venta"
+								default 0,
+}
+primary key ( epr_tli , epr_tpre , epr_enti , epr_orden , epr_art  )[11],
+index prov  ( epr_tpre , epr_tli , epr_enti)[6],
+index art   ( epr_tli , epr_tpre , epr_enti , epr_art  )[9],
+index enti  ( epr_tli , epr_tpre , epr_art  , epr_enti )[9];
+
+//
+// Tipo de agenda de precios
+//
+table tagenda					descr "Tipo de Agenda                "
+{
+	tag_cage	num(4)			descr "Tipo de agenda                "
+								>0
+								not null,
+	tag_dage	char(30)		descr "Descripción                   "
+								,
+	tag_drage	char(10)		descr "Descripción reducida          "
+								,
+	tag_tli		num(2)			descr "Lista de precios asociada     "
+								not null,
+	tag_tpre	num(2)			descr "Precio asociado               "
+								>0 not null,
+}
+primary key ( tag_cage );
+
+//
+// Valores de precios sugeridos
+//
+table sprecio					descr "Valores de Precios sugeridos  "
+{
+	spr_cage	num(4)			descr "Tipo de agenda                "
+								in tagenda:(tag_dage)
+								not null,
+	spr_art		num(9)			descr "Artículo                      "
+								not null,
+	spr_pval	num(9,4)		descr "Valor precio                  "
+								default 0
+								not null,
+	spr_obs		char(30)		descr "Descripción                   "
+								,
+	spr_usua	char(15)		descr "Usuario                       "
+								,
+	spr_fact	date			descr "Fecha                         "
+								,
+	spr_hora	time			descr "Hora                          "
+								,
+	spr_item	num(4)			descr "Item                          "
+								,
+}
+primary key ( spr_cage , spr_item, spr_art ),
+index arti  ( spr_cage, spr_art );
+
+//
+// Control de Ultimo Precio
+//
+table ultpre					descr "Control de Ultimo Precio              "
+{
+	upr_ver		num(4)			descr "Versión                               "
+								not null
+								,
+	upr_tpre	num(2)			descr "Tipo de Precio                        "
+								in ctippre:(ctp_dtpre)
+								default 0
+								,
+	upr_tprep	num(5,2)		descr "Porcentaje límite de desvío de Precio "
+								,
+}
+primary key ( upr_ver , upr_tpre );
+
+//
+// Niveles de Riesgos (valores)
+//
+table nivries					descr "Niveles de Riesgos (valores)          "
+{
+	nir_niv		num(2)			descr "Código de Nivel                       "
+								not null,
+  	nir_dniv	char(30)		descr "Descripción del Nivel                 "
+  								,
+	nir_drniv	char(10)		descr "Descripción reducida del Nivel        "
+  								,
+	nir_ment	char(1)			descr "Modo de entidad                       "
+								in ("E":"Por entidad",
+									"G":"Genérico")
+								default "G"
+								not null,
+	nir_tenti	char(1)			descr "Tipo Entidad Default                  "
+								,
+	nir_mdia	char(1)			descr "Modo de Control de días               "
+								in ("D":"Por control de días",
+									"G":"Genérico")
+								default "G"
+								not null,
+   	nir_mdiav	char(1)			descr "Modo de Control de días Variac. Vtas. "
+								in ("D":"Por control de días",
+									"G":"Genérico")
+								default "G"
+								not null,
+	nir_porce	bool			descr "Calcula por Porcentaje?               "
+								default false,
+	nir_pord	num(5,2)		descr "Porcentaje Desde                      "
+								,
+	nir_porh	num(5,2)		descr "Porcentaje Hasta                      "
+								,
+}
+primary key ( nir_niv );
+
+//
+// Niveles de Riesgos (valores)
+//
+table riespre					descr "Puntaje de Riesgos por Nivel          "
+{
+	rip_ver		num(4)			descr "Versión de Puntaje de Riesgo          "
+								not null
+								in (0:"Unica")
+								default 0,
+	rip_niv		num(2)			descr "Código de Nivel de Riesgo             "
+								not null
+								in nivries:(nir_dniv),
+	rip_ptje	num(5)			descr "Puntaje de Riesgo                     "
+								,
+	rip_cdias	num(4)			descr "Días Mínimos para el Control          "
+								,
+	rip_vdias	num(4)			descr "Días Mínimos para Variación de Vtas.  "
+								,
+}
+primary key ( rip_ver, rip_niv );
+
+//
+// Condiciones futuras por proveedor.
+//
+table eprecioh					descr "Valores de Precios por Entidad"
+{
+	eph_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+	eph_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								not null,        
+	eph_enti	num(6)			descr "Entidad                       "
+								,
+	eph_lista	num(6)			descr "Lista                         "
+								,
+	eph_orden	num(6)			descr "Orden                         "
+								,
+	eph_art		num(9)			descr "Artículo                      "
+								not null, 
+	eph_bon1	num(5,2)		descr "Bonificaciones y descuentos"
+								,
+	eph_bon2	num(5,2)		descr "Bonificaciones y descuentos"
+								,
+	eph_bon3	num(5,2)		descr "Bonificaciones y descuentos"
+								,
+	eph_lle		num(5)			descr "Lleva"
+								,
+	eph_pag		num(5)			descr "Paga"
+								,
+	eph_bon4	num(5,2)		descr "Bonificaciones y descuentos"
+								,
+	eph_pxcaj	num(10,2)		descr "Peso x Cajas               "
+								default 0.0,
+	eph_uxb		num(4)			descr "Unidad p/Bulto de Artículo "
+								,
+	eph_abon1[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 1"
+								default 0,
+	eph_abon2[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 2"
+								default 0,
+	eph_abon3[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 3"
+								default 0,
+	eph_abon4[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 4"
+								default 0,
+	eph_bon5		num(5,2)	descr "Bonificaciones y descuentos"
+								default 0,
+	eph_bon6		num(5,2)	descr "Auxiliar de Bonif. y descuentos p/fuera de FC"
+								default 0,
+	eph_bonnv		num(5,2)	descr "Bonificaciones No Volcadas al precio Venta"
+								default 0,
+}
+primary key ( eph_tli , eph_tpre , eph_enti , eph_lista , eph_orden , eph_art ),
+index prov  ( eph_tpre , eph_tli , eph_enti,eph_lista),
+index art   ( eph_tli , eph_tpre , eph_enti ,eph_lista, eph_art  ),
+index enti  ( eph_tli , eph_tpre , eph_art  , eph_enti,eph_lista );
+
+//
+// Criterio de búsqueda de precios por tipo de venta 
+//
+table oprecio					descr "Orden de asignación de precios    "
+{
+	opr_tvta		num(1)		descr "Tipo de Venta                     "
+								not null,
+	opr_secup[10]	num(2)		descr "Orden de asignación               "
+								,
+	opr_contp		num(2)		descr "Precio control                    "
+								,
+	opr_usua		char(15)	descr "Usuario                           "
+								,
+	opr_fact		date		descr "Fecha                             "
+								,
+	opr_hora		time		descr "Hora                              "
+								,
+	opr_pmin		num(2)		descr "Precio minimol                    "
+								,
+}
+primary key (opr_tvta);
+
+table gralsuc						descr "Parámetro Control Gral x Suc  "
+{
+	gps_suc		num(2)				descr "Código de Sucursal"
+									not null,
+	gps_tlisuc	num(2)				descr "Código de Lista Habilitada    "
+									not null,
+}
+primary key ( gps_suc );
+
+//
+// Formacion de precios del proveedor con vigencia.
+//
+table vprecio					descr "Vigencia de Precios por entidad"
+{
+	vpr_enti	num(6)			descr "Proveedor                      "
+								,
+	vpr_lista	num(6)			descr "Lista del proveedor            "
+								,
+	vpr_fvigp	date			descr "Fecha de vigencia provedor     "
+								default today
+								not null,
+	vpr_hvigp	time			descr "Hora de vigencia proveedor     "
+								,
+	vpr_desc	char(30)		descr "Descripción                    "
+								,
+	vpr_est		char(1)			descr "Estado                         "
+								in ("l":"Lista",
+									"d":"Definido",
+									"p":"Pendiente",
+									"a":"Activado",
+									"b":"Borrado")
+								default "d"
+								not null,
+// Control de activación
+	vpr_fvig	date			descr "Fecha de vigencia real         "
+								default today
+								not null,
+	vpr_hvig	time			descr "Hora de vigencia real          "
+								,
+	vpr_uact	char(15)		descr "Usuario activación             "
+								,
+	vpr_fact	date			descr "Fecha activación               "
+								,
+	vpr_hact	time			descr "Hora activación                "
+								,
+// control de alta de la lista
+	vpr_usua	char(15)		descr "Usuario                        "
+								,
+	vpr_fing	date			descr "Fecha                          "
+								,
+	vpr_hing	time			descr "Hora                           "
+								,
+}
+primary key ( vpr_enti , vpr_lista ),
+index estado ( vpr_est, vpr_fvig, vpr_enti, vpr_lista),
+index estent ( vpr_est, vpr_enti, vpr_lista);
+
+//
+// Formacion de precios por entidad con vigencia.
+//
+table fprecio					descr "Formacion de Precios de proveedor c/vigencia"
+{
+	fpr_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+ 	fpr_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								not null,        
+	fpr_enti	num(6)			descr "Entidad                       "
+								,
+	fpr_fvig	date			descr "Fecha de vigencia             "
+								default today
+								not null,
+	fpr_orden	num(6)			descr "Orden                         "
+								,
+	fpr_art		num(9)			descr "Artículo                      "
+								not null, 
+	fpr_bon1	num(5,2)		descr "Bonificaciones y descuentos 1 "
+								default 0,
+	fpr_bon2	num(5,2)		descr "Bonificaciones y descuentos 2 "
+								default 0,
+	fpr_bon3	num(5,2)		descr "Bonificaciones y descuentos 3 "
+								default 0,
+	fpr_bon4	num(5,2)		descr "Bonificaciones y descuentos 4 "
+								default 0,
+	fpr_bon5    num(5,2)        descr "Bonificaciones y descuentos   "
+								default 0,
+	fpr_lle		num(5)			descr "Lleva                         "
+								,
+	fpr_pag		num(5)			descr "Paga                          "
+								,
+	fpr_pxcaj	num(10,2)		descr "Peso x Cajas                  "
+								default 0.0,
+	fpr_uxb		num(4)			descr "Unidad p/Bulto de Artículo    "
+								,
+	fpr_bon6	num(5,2)		descr "Bonif. y descuentos p/fuera de FC"
+								,
+}
+primary key ( fpr_tli , fpr_tpre, fpr_enti, fpr_fvig, fpr_orden , fpr_art ),
+index prov  ( fpr_tpre, fpr_tli , fpr_enti, fpr_fvig),
+index art   ( fpr_tli , fpr_tpre, fpr_enti, fpr_fvig, fpr_art),
+index enti  ( fpr_tli , fpr_tpre, fpr_art , fpr_enti );
+
+table rprecio					descr "Tabla de Resguardo de EPRECIO  "
+{
+	rpr_tli		num(2)			descr "Lista                         "
+								in tlista:(tli_dtli)
+								not null,
+ 	rpr_tpre	num(2)			descr "Código de precio              "
+								in ctippre:(ctp_dtpre)
+								not null,        
+	rpr_enti	num(6)			descr "Entidad                       "
+								,
+	rpr_orden	num(6)			descr "Orden                         "
+								,
+	rpr_art		num(9)			descr "Artículo                      "
+								not null, 
+	rpr_bon1	num(5,2)		descr "Bonificaciones y descuentos 1"
+								default 0,
+   	rpr_bon2	num(5,2)		descr "Bonificaciones y descuentos 2"
+								default 0,
+	rpr_bon3	num(5,2)		descr "Bonificaciones y descuentos 3"
+								default 0,
+	rpr_lle		num(5)			descr "Lleva"
+								,
+	rpr_pag		num(5)			descr "Paga"
+								,
+	rpr_bon4	num(5,2)		descr "Bonificaciones y descuentos 4"
+								default 0,
+	rpr_pxcaj	num(10,2)		descr "Peso x Cajas               "
+								default 0.0,
+	rpr_uxb		num(4)			descr "Unidad p/Bulto de Artículo "
+								,
+	rpr_abon1[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 1"
+								default 0,
+   	rpr_abon2[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 2"
+								default 0,
+	rpr_abon3[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 3"
+								default 0,
+	rpr_abon4[10]	num(5,2)	descr "Auxiliar de Bonificaciones y descuentos 4"
+								default 0,
+	rpr_bon5    num(5,2)        descr "Bonificaciones y descuentos"
+								default 0,
+	rpr_bon6    num(5,2)        descr "Bonif. y descuentos p/fuera de FC"
+								default 0,
+}
+primary key ( rpr_tli , rpr_tpre, rpr_enti , rpr_orden , rpr_art  ),
+index prov  ( rpr_enti, rpr_art , rpr_tpre);
+
+table ccrired					descr "Cabecera Criterio de Redondeo "
+{
+	ccr_cod		num(2)			descr "Codigo Criterio de Redondeo   " 
+								not null,
+	ccr_des		char(90)		descr "Descripcion Criterio Redondeo " 
+								not null,
+}
+primary key (ccr_cod);
+
+table dcrired					descr "Detalle Criterio de Redondeo "
+{
+	dcr_cri		num(2)			descr "Codigo Criterio de Redondeo   " 
+								not null,
+	dcr_cod		num(2)			descr "Codigo Detalle de Redondeo   " 
+								not null,
+	dcr_pred	num(9,4)		descr "Precio Desde                 "
+								default 0
+								not null,
+	dcr_preh	num(9,4)		descr "Precio Hasta                 "
+								default 0
+								not null,
+	dcr_met		char(10)		descr "Metodo de Redondeo       "
+								not null
+								in( "up":"Hacia arriba",
+									"down":"Hacia Abajo",
+									"round":"Hacia mas cercano")
+								,
+	dcr_vai[10]	num(9,4)		descr "Valores Intermedios       "
+								,
+	dcr_des		char(90)		descr "Descripcion Detalle Redondeo " 
+								,
+}
+primary key (dcr_cri, dcr_cod);
+
+table vistapre					descr "Vista para manejo de precios "
+{
+	vis_cod		char(15)		descr "Código de Vista"
+								not null,
+	vis_des		char(80)		descr "Descripcion de la vista      "
+								not null,
+	vis_diavig  char(2)			descr "Dia de vigencia Sugerida"
+								in("H":"Hoy","M":"Manana","L":"Proximo Lunes","D":"Proximo Domingo")
+								not null
+								,
+	vis_tpr[20]	num(2)			descr "Tipo de precio para la vista"
+								in ctippre:(ctp_dtpre)
+								,
+	vis_hab		bool			descr "Habilita Modificar?"
+								not null
+								default true
+								,
+}
+primary key ( vis_cod );
+
+table relvis					descr "Relacion Vista con programa"
+{
+	rvis_pgm	char(15)		descr "Nombre del programa"
+								not null
+								,
+	rvis_vis     char(15)        descr "Código de Vista"
+								in vistapre:vis_des
+								not null
+								,
+}
+primary key (rvis_pgm, rvis_vis),
+index xvista(rvis_vis, rvis_pgm);
+
+//
+// Margen de utilidad por Proveedor y Canal de venta
+//
+table proutil					descr "Utilidad por Proveedeor y Canal   "
+{
+	put_pro		num(6)			descr "Código de Proveedor               "
+	  							,
+	put_tvta	num(1)			descr "Tipo de Venta                     "
+								not null
+								,
+	put_util	num(7,4)		descr "Margen de utilidad                "
+								>0
+								default 0,
+	put_fvig	date			descr "Fecha de vigencia                 "
+								default today
+								not null,
+	put_hvig	time			descr "Hora de vigencia                  "
+								,
+	put_usua	char(15)		descr "Usuario que modifica              "
+								,
+	put_fing	date			descr "Fecha activación               "
+								,
+	put_hing	time			descr "Hora activación                "
+								,
+}
+primary key (put_pro,put_tvta, put_fvig, put_hvig),
+index xtipo (put_tvta,put_pro,put_fvig, put_hvig);
+
+//
+// Tabla de Control General Markup
+//
+table prectrg					descr "Control General Markup        "
+{
+	pcg_vers	num(4)			descr "Numero de Version de Parametro"
+								>= 0
+								default 0
+								not null,
+}
+primary key (pcg_vers);
+
+//
+// Tabla Cabecera de Codigo Ponderador
+//
+table cponmarg					descr "Cabecera de Codigo Ponderador "
+{
+	ccp_cpon	num(4)			descr "Codigo de Ponderador          "
+								>= 0
+								not null,
+  	ccp_dpon	char(30)		descr "Descripcion del Ponderado     "
+  								,
+  	ccp_mkp		num(5,2)		descr "Porcentaje de Markup Default  "
+  								default 0
+  								not null,
+// Valores de Peso de los campos
+  	ccp_pemp	num(2)			descr "Nro.Ponderador para Empresa   "
+  								default 1 
+  								not null,
+   	ccp_psuc	num(2)			descr "Nro.Ponderador para Sucursal  "   
+  								default 1 
+  								not null, 
+	ccp_ppro	num(2)			descr "Nro.Ponderador para Proveedor "
+  								default 1 
+  								not null, 
+	ccp_part	num(2)			descr "Nro.Ponderador para Articulo  "
+  								default 1 
+  								not null, 
+	ccp_pfam	num(2)			descr "Nro.Ponderador para Familia   "
+  								default 1 
+  								not null, 
+	ccp_pdep	num(2)			descr "Nro.Ponderador para Depto.    "
+  								default 1 
+  								not null, 
+	ccp_psec	num(2)			descr "Nro.Ponderador para Seccion   "
+  								default 1 
+  								not null, 
+	ccp_pgru	num(2)			descr "Nro.Ponderador para Grupo     "
+  								default 1 
+  								not null, 
+// control de alta de ponderado	
+	ccp_usum	char(15)		descr "Usuario que Modifico          "
+								,
+	ccp_fing	date			descr "Fecha                         "
+								default today,
+	ccp_hing	time			descr "Hora                          "
+								default hour,
+}
+primary key (ccp_cpon);
+
+//
+// Tabla Detalle de Codigo Ponderador
+//
+table dponmarg					descr "Detalle de Codigo Ponderador  "
+{
+	dcp_cpon	num(4)			descr "Codigo de Ponderador          "
+								in cponmarg:(ccp_dpon)
+								not null,
+  	dcp_secu	num(9)			descr "Secuencia                     "
+  								not null,
+  	dcp_emp		num(2)			descr "Nro.Ponderador para Empresa   "
+  								,
+   	dcp_suc		num(2)			descr "Nro.Ponderador para Sucursal  "   
+  								, 
+	dcp_prov	num(6)			descr "Nro.Ponderador para Proveedor "
+  								, 
+	dcp_art		num(9)			descr "Nro.Ponderador para Articulo  "
+  								, 
+	dcp_fam		num(2)			descr "Nro.Ponderador para Familia   "
+  								, 
+	dcp_dep		num(2)			descr "Nro.Ponderador para Depto.    "
+  								, 
+	dcp_sec		num(2)			descr "Nro.Ponderador para Seccion   "
+  								, 
+	dcp_gru		num(2)			descr "Nro.Ponderador para Grupo     "
+  								, 
+	dcp_pesop	num(4)			descr "Peso - Suma de Ponderados     "
+								default 0,
+	dcp_mkp		num(5,2)		descr "Porcentaje de Markup          "
+  								default 0
+  								not null,
+// control de alta de ponderado	
+	dcp_usum	char(15)		descr "Usuario que Modifico          "
+								,
+	dcp_fing	date			descr "Fecha                         "
+								default today,
+	dcp_hing	time			descr "Hora                          "
+								default hour,
+}
+primary key (dcp_cpon, dcp_secu);
+
+//
+// Tabla de Politicas de Precios a Agendar
+//
+table premarg					descr "Politicas de Precios a Agendar"
+{
+	ppa_lis		num(2)			descr "Codigo de Lista               "
+								in tlista:(tli_dtli)
+								not null,
+   	ppa_tpre	num(2)			descr "Tipo de Precio                "
+   								in ctippre:(ctp_dtpre)
+   								not null,
+   	ppa_lisb	num(2)			descr "Codigo de Lista Base          "
+   								in tlista:(tli_dtli)
+   								not null,
+  	ppa_tpreb	num(2)			descr "Tipo de Precio Base           "
+  								in ctippre:(ctp_dtpre)
+  								not null,
+  	ppa_cage	num(4)			descr "Codigo de Agenda a Utilizar   "
+  								in tagenda:(tag_dage)
+  								not null,
+   	ppa_cpon	num(4)			descr "Codigo Ponderador a Utilizar  "
+   								in cponmarg:(ccp_dpon)
+   								not null,
+	ppa_ccr		num(2)			descr "Codigo de Criterio de Redondeo"
+								in ccrired:(ccr_des)
+								not null,
+// control de alta de politica	
+	ppa_usum	char(15)		descr "Usuario que Modifico          "
+								,
+	ppa_fing	date			descr "Fecha                         "
+								default today,
+	ppa_hing	time			descr "Hora                          "
+								default hour,
+}
+primary key (ppa_lis, ppa_tpre),
+index lisb  (ppa_lisb, ppa_tpreb, ppa_lis, ppa_tpre);
+
+/////INTERFAS DE STOCK
+
+
+create schema forumsto descr "Sub-Esquema de Stock de FORUM"
+                    language "C";
+
+table stock							descr "Maestra de Stock              "
+{
+	stk_suc			num(2)			descr "Código de Sucursal            "
+									not null,
+	stk_est			char(5)			descr "Estado                      "
+									not null,
+	stk_art			num(9)			descr "Código de Artículo            "
+									not null,
+	stk_exi			num(9)			descr "Existencia en Unidades        "
+									default 0
+									not null,
+	stk_exip		num(9)			descr "Existencia en Piezas          "
+									default 0
+									not null,
+	stk_uce			num(9)			descr "Ultima Cantidad Entrada       "
+									default 0
+									not null,
+	stk_ucep		num(9)			descr "Ultima Cantidad Entrada Piezas"
+									default 0 
+									not null,
+	stk_fue			date			descr "Fecha Ultima Entrada Mercaderia"
+									,
+	stk_cmin		num(9)			descr "Cantidad Mínima               "
+									default 0
+									not null,
+	stk_cmax		num(9)			descr "Cantidad Máxima               "
+									default 0,
+	stk_fuv			date			descr "Fecha Ultima Venta            "
+									,
+	stk_fuai		date			descr "Fecha Ultimo Ajuste Inventario"
+									,
+	stk_fuc			date			descr "Fecha de Ultima Compra        "
+									,
+	stk_fps			date			descr "Fecha F.P.S.                  "
+									,
+	stk_asi			num(9)			descr "Existencia en Unidades Comprometidas"
+									default 0
+									not null,
+	stk_asip		num(9)			descr "Existencia en Piezas Comprometidas "
+									default 0
+									not null,
+}
+primary key (stk_suc, stk_est, stk_art),
+index art   (stk_art, stk_est, stk_suc);
+
+
+table cmovsto		  				descr "Movimientos de stock-Cabecera "
+{
+	cmv_suc			num(2)			descr "Código de Sucursal            "
+							  		default $codsuc
+							  		not null,
+	cmv_tip			char(2)			descr "Tipo de Comprobante           "
+									not null,
+	cmv_stip		num(2)	  		descr "Subtipo de Comprobante        "
+									not null,
+	cmv_nro			num(9)			descr "Número de movimiento          "
+							  		not null
+							 		>0,
+	cmv_fec			date	  		descr "Fecha de Comprobante          "
+									default today 
+							  		not null,
+	cmv_hora		time			descr "Hora de Comprobante           "
+									,
+	cmv_obs			char(40)  		descr "Observaciones                 "
+							 		,
+	cmv_tsuc		num(2)	  		descr "Sucursal Origen/Destino       "
+						  			default $codsuc
+									not null,
+	cmv_sig			num(2)			descr "Signo de la Operación         "
+									in(-1:"Negativo",
+										1:"Positivo") 
+									not null,
+	cmv_ope			num(4)	  		descr "Operador                      "
+							  		default $OPE,
+	cmv_sec			char(4)	 		descr "Sector Operativo              "
+							  		default $SECTOR,
+	cmv_mimp		bool			descr "Marca Impresión               "
+							  		default false,
+	cmv_tra			num(1)			descr "Marca de Transferencia        "
+									in (0:"No transferido",
+										1:"Transferido")
+							  		default 0,
+	cmv_con			num(4)	 		descr "Cantidad de movimientos       "
+									,
+	cmv_tcadm		char(2)			descr "Tipo de Comp.generado en ADMIN"
+									,
+	cmv_opadm		num(2)			descr "Operación    generada en ADMIN"
+							  		,
+	cmv_nroadm		num(9)	 		descr "Numero       generado en ADMIN"
+							  		,
+	cmv_enti		num(6)			descr "Entidad                       "
+									,
+	cmv_plan		num(5)			descr "Planilla Origen/Destino       "
+									,
+	cmv_ualm		num(9)			descr "Udad. de Almac. Origen/Destino"
+									,
+	cmv_astc		char(2)			descr "Tipo de Comprobante Asociado  "
+									,
+	cmv_asnro		char(18)		descr "Número de Comprobante Asociado"
+									,
+	cmv_estv		bool			descr "Marca Inclusion Estadistica Ventas"
+							  		not null
+							  		default false,
+	cmv_estc		bool			descr "Marca Inclusion Estadistica Compras"
+							  		not null
+							  		default false,
+	cmv_fing		date	  		descr "Fecha de Ingreso Comprobante  "
+									default today 
+							  		not null,
+	cmv_hing		time			descr "Hora de Ingreso Comprobante   "
+									,
+	cmv_nlegr		num(9)			descr "Numero de Legajo Recepcion    "
+									,
+}
+primary key ( cmv_suc , cmv_tip, cmv_stip, cmv_nro )[6],
+index tran  ( cmv_tra , cmv_suc, cmv_tip , cmv_stip, cmv_nro)[6],
+index prove ( cmv_enti, cmv_fec )[5],
+index fecha ( cmv_suc , cmv_fec )[5],
+index xestav( cmv_estv, cmv_fec )[5],
+index xestac( cmv_estc, cmv_fec )[5],
+index xastc ( cmv_astc, cmv_asnro, cmv_suc)[6],
+index legrec( cmv_suc, cmv_nlegr not null, cmv_tip, cmv_stip, cmv_nro )[6];
+
+table dmovsto						descr "Movimientos de stock - Detalle"
+{
+	dmv_suc			num(2)			descr "Código de Sucursal            "
+									default $codsuc
+									not null,
+	dmv_tip			char(2)			descr "Tipo de Comprobante           "
+									not null,
+	dmv_stip		num(2)			descr "Subtipo Comprobante           "
+									not null,
+	dmv_nro			num(9)			descr "Número de movimiento          "
+									not null
+									>0,
+	dmv_est			char(5)			descr "Estado                      "
+									not null,
+	dmv_art			num(9)			descr "Código Artículo               "
+									not null,
+	dmv_udad		char(1)			descr "Unidad                        "
+									/* ver forumcnf.sc - fudad */
+									not null,
+	dmv_cant		num(9)			descr "Cantidad                      "
+									default 0
+									not null ,
+	dmv_pco			num(9,4)		descr "Valor Unitario                "
+									not null 
+									default 0,
+	dmv_val			num(10,2)		descr "Valorización                  "
+									not null 
+									default 0,
+	dmv_scant		num(9)			descr "Cantidad en Unidades          "
+									not null 
+									default 0,
+	dmv_cpie		num(9)			descr "Cantidad de piezas            "
+									not null
+									default 0,
+	dmv_ite			num(4)			descr "Nro. de Item                  "
+									default 1,
+	dmv_tra			num(1)			descr "Marca de Transferencia        "
+									in (0:"No transferido",
+										1:"Transferido")
+									default 0,
+	dmv_fec			date			descr "Fecha del Comprobante         "
+									default today 
+									not null,
+	dmv_timov		num(1)			descr "Tipo de movimiento            "
+									/* ver forumcnf.sc - ftmov */
+									default 0,
+	dmv_resu		bool			descr "Pasado a estadísticas?        "
+									default false,
+	dmv_pedi		num(9)			descr "Número de Pedido              "
+									,
+	dmv_itped		num(4)			descr "Item del Pedido               "
+									default 0,
+	dmv_inve		bool			descr "Antes del Inventario?         "
+									default false,
+	dmv_tart		num(1)			descr "Tipo de Artículo              "
+									/* ver forumcnf.sc - ftart */
+									default 0,
+	dmv_cobs		num(3)			descr "Código de Observación         "
+									default 0,
+	dmv_plan		num(5)			descr "Planilla                      "
+									,
+	dmv_ualm		num(9)			descr "Unidad de Almacenamiento      "
+									,
+ 	dmv_fvenc		date			descr "Fecha de Vencimiento          "
+									,
+	dmv_codbar		char(20)		descr "Codigo de Barra empleado      "
+									,
+	dmv_hora		time			descr "Hora del Comprobante          "
+									not null,
+	
+}
+primary key ( dmv_suc, dmv_tip, dmv_stip, dmv_nro, dmv_est, dmv_art, dmv_ite)[38],
+index obj   ( dmv_est, dmv_art, dmv_fec, dmv_hora)[22],
+index tran  ( dmv_tra)[12],
+index suc   ( dmv_suc, dmv_est, dmv_art, dmv_fec, dmv_hora)[24],
+index fecha ( dmv_suc, dmv_fec, dmv_est, dmv_art)[33],
+index pedi  ( dmv_pedi not null, dmv_itped not null, dmv_suc, dmv_est, dmv_art )[59],
+index xinve ( dmv_suc, dmv_inve, dmv_est, dmv_art, dmv_fec)[12],
+index estfec( dmv_suc, dmv_est, dmv_fec, dmv_art)[22];
+
+
+table minmax						descr "Stocks Máximo y Mínimo        "
+{
+	stk_suc	  		num(2)			descr "Código de Sucursal            "
+							  		not null,
+	stk_art			num(9)			descr "Código de Articulo            "
+									not null,
+	stk_cmin		num(9)			descr "Cantidad Mínima               "
+				  					default 0
+									not null,
+	stk_cmax  		num(9)			descr "Cantidad Máxima               "
+									default 0
+			  						not null,
+}
+primary key (stk_suc, stk_art);
+
+
+table saldesp		  				descr "Saldos por despacho           "
+{
+	sad_suc			num(2)			descr "Sucursal                      "
+									,
+	sad_art			num(9)			descr "Artículo                      "
+							  		,                                    
+	sad_adu			num(2)	 		descr "Aduana                        "
+									,                                    
+	sad_des			num(7)			descr "Número de Despacho            "
+							  		,
+	sad_can			num(9)			descr "Saldo                         "
+									,
+	sad_fec			date			descr "Fecha despacho                "
+									,
+}
+primary key (sad_suc, sad_art, sad_adu, sad_des),
+index   fec (sad_suc, sad_art, sad_fec);
+
+
+table detdesp						descr "Detalle por despacho          "
+{
+	ded_suc			num(2)			descr "Sucursal                      "
+									,
+	ded_art			num(9)			descr "Artículo                      "
+									,
+	ded_adu			num(2)			descr "Aduana                        "
+									,
+	ded_des			num(7)			descr "Despacho                      "
+									,
+	ded_tip			char(2)			descr "Tipo de comprobante           "
+									,
+	ded_stip		num(2)			descr "Subtipo de comprobante        "
+									,
+	ded_nro			num(9)			descr "Nro de comprobante            "
+									,
+	ded_can			num(9)			descr "Cantidad                      "
+									,
+	ded_fec			date			descr "Fecha comprobante             "
+									,
+}
+primary key (ded_suc, ded_art, ded_adu, ded_des, ded_tip, ded_stip, ded_nro),
+index   mov (ded_suc, ded_art, ded_tip, ded_stip, ded_nro, ded_adu, ded_des);
+
+table stockubi						descr "Stock por Ubicaciones         "
+{
+	ubi_suc			num(2)			descr "Código de Sucursal            "
+									not null,
+	ubi_art			num(9)			descr "Código de Artículo            "
+									not null,
+	ubi_plan		num(5)			descr "Planilla                      "
+									not null,
+	ubi_fvenc		date			descr "Fecha de Vencimiento          "
+									not null,
+	ubi_ualm		num(9)			descr "Unidad de Almacenamiento      "
+									,
+	ubi_niv0		char(3)			descr "Nivel de Ubicación 0          "
+									,
+	ubi_niv1		char(3)			descr "Nivel de Ubicación 1          "
+									,
+	ubi_niv2		char(3)			descr "Nivel de Ubicación 2          "
+									,
+	ubi_exi			num(9)			descr "Existencia en Unidades        "
+									default 0
+									not null,
+	ubi_exip		num(9)			descr "Existencia en Piezas          "
+									default 0
+									not null,
+	ubi_tpen		bool			descr "Pendiente de traslado         "
+									default false,
+}
+primary key (ubi_suc, ubi_art, ubi_fvenc, ubi_plan, ubi_ualm),
+index plani (ubi_suc, ubi_art, ubi_plan, ubi_fvenc, ubi_ualm),
+index plani1(ubi_suc, ubi_plan, ubi_art, ubi_fvenc, ubi_ualm),
+index ualm  (ubi_suc, ubi_ualm, ubi_art);
+
+//
+// Cabecera de movimiento de stock
+//
+
+table cabest						descr "Cabecera movimiento stock"
+{
+	ce_suc			num(2)			descr "Sucursal                "
+									,
+	ce_tcom			char(2)			descr "Tipo de comprobante     "
+									not null,
+	ce_ope			num(2)			descr "Operación               "
+									not null,
+	ce_nmov			num(9)			descr "Número de movimiento    "
+									>0 not null,
+	ce_fmov			date			descr "Fecha de movimiento     "
+									not null,
+	ce_hmov			time			descr "Hora de movimiento       "
+									,
+	ce_astc			char(2)			descr "Tipo comp. asignación   "
+									,
+	ce_asop			num(2)			descr "Operación asignación    "
+									,
+	ce_asnro		num(9)			descr "Número de asignación    "
+									,
+	ce_conso		num(9)			descr "Partida /Consolidado    "
+									,
+	ce_mconf		bool			descr "Marca de confirmación   "  
+									,
+	ce_adm			bool			descr "Pasado a ADMIN          "
+									,
+	ce_depu			char(1)			descr "Marca de depuración      "
+									in ("d":"Depurar y eliminar     ",
+										"l":"Depurar no eliminar    ",
+										"a":"Depurado no eliminar   ",
+										"e":"Eliminar               ",
+										"n":"No depurar             ")
+									default "n",
+	ce_usua			char(10)		descr "Usuario                 "
+									,
+	ce_emp			num(2)			descr "Empresa                 "
+									not null
+									,
+	ce_fing			date			descr "Fecha de Ingreso        "
+									,
+	ce_hing			time			descr "Hora de Ingreso         "
+									,
+	ce_mmod			num(1)			descr "Marca de Modificación   "
+									in (0:"No se permite modificar ",
+										1:"Se permite modificar    ")
+									default 1,
+	ce_tenti		char(1)			descr "Tipo Entidad            "
+									,
+	ce_prog			char(15)			descr "Programa o funcion      "
+									,
+	ce_enti			num(6)			descr "Entidad                 "
+									,
+	ce_tcext		char(2)			descr "Tipo de Comprobante Externo          "
+									,
+	ce_nroext		char(21)		descr "Numero Externo          "
+									,
+	ce_dmov			char(40)		descr "Descr. del movimiento   "
+									,
+	ce_daux1		char(40)		descr "Descripcion Auxiliar 1  "
+									,
+	ce_tenaux1		char(1)			descr "Tipo de Entidad Auxiliar"
+									,
+	ce_enaux1		num(6)			descr "Entidad Auxiliar 1      "
+									,
+	ce_uda			char(15)		descr "Unidad de Almacenamiento"
+									,
+	ce_clavor       char(80)        descr "Clave de Ordenamiento   " 
+									,
+	ce_plan         num(6)          descr "Planila    "
+									,
+	ce_sualm        char(15)        descr "Sub-Unidad Almacenamiento"
+									,
+}
+primary key  ( ce_suc, ce_tcom , ce_ope , ce_nmov),
+index fmov   ( ce_suc, ce_fmov),
+index enti   ( ce_enti, ce_suc, ce_tcom , ce_ope , ce_nmov),
+index xasnro ( ce_suc, ce_astc, ce_asop, ce_asnro);
+
+
+//
+// Detalle de movimiento de stock
+//
+table detest						descr "Detalle movimiento stock"
+{
+	de_suc		num(2)				descr "Sucursal                "
+									not null,
+	de_tcom		char(2)				descr "Tipo de comprobante     "
+									not null,
+	de_ope		num(2)				descr "Operación               "
+									not null,
+	de_nmov		num(9)				descr "Número de movimiento    "
+									>0 not null,
+	de_item		num(4)				descr "Item de renglon         "
+									> 0 not null,
+	de_sec		num(4)				descr "Secuencia/afectación    "
+									>= 0 not null,
+	de_art		num(9)				descr "Código de articulo      "
+									not null,
+	de_est		char(5)				descr "Estado afectado         "
+									not null,
+	de_astc		char(2)				descr "Asignación tipo comprob."
+									,
+	de_asop		num(2)				descr "Asignación operación    "
+									,
+	de_asnro	num(9)				descr "Asignación nro movimiento"
+									,
+	de_conso	num(9)				descr "Partida /Consolidado    "
+									,
+	de_udad		char(1)				descr "Tipo de unidad          "
+									,
+	de_cpie		num(9)	 			descr "Cantidad de piezas            "
+									not null
+									default 0,
+	de_cant		num(9)				descr "Cantidad                "
+									not null default 0,
+	de_uxb		num(4)				descr "Unidad por Bulto"
+									default 1
+									not null,
+	de_scant	num(9)				descr "Cantidad e unidades     "
+									not null default 0,
+	de_tpre		char(2)				descr "Tipo de precio          "
+									not null default "0",
+	de_valu		num(9,4)			descr "Valor Unitario          "
+									not null default 1,
+	de_val		num(10,2)			descr "Valor                   "
+									not null default 1,
+	de_fmov		date				descr "Fecha de Movimiento     "
+									,
+	de_hmov		time				descr "Hora de Movimiento      "
+									,
+	de_ord		num(2)				descr "Orden para impresión    "
+									,
+	de_lote		char(15)			descr "Lote de la Partida      "
+									,
+	de_folio	char(10)			descr "Folio de la Partida     "
+									,
+	de_fvenc	date				descr "Vencimiento del producto"
+									,
+	de_depu		char(1)				descr "Marca de depuración      "
+									in ("d":"Depurar y eliminar     ",
+										"l":"Depurar no eliminar    ",
+										"a":"Depurado no eliminar   ",
+										"e":"Eliminar               ",
+										" ":"No depurar             ")
+									default " ",
+	de_enti		num(6)				descr "Entidad                  "
+									,
+	de_codbar	char(20)			descr "Codigo de Barra empleado      "
+									,
+	de_asite	num(4)				descr "Item de Comprob Referencia"
+									,
+	de_uda     char(15)             descr "Unidad de Almacenamiento"  
+									,
+	de_clavor   char(80)            descr "Clave de Ordenamiento   "   
+									,
+	de_plan     num(6)              descr "Planila    "  
+									,
+	de_sualm    char(15)            descr "Unidad de Almacenamiento"  
+									,
+	
+}
+primary key ( de_suc, de_tcom, de_ope, de_nmov, de_item, de_sec),
+index fech  ( de_suc, de_fmov),
+index refer ( de_suc, de_art, de_est, de_astc, de_asop, de_asnro),
+index estado( de_suc, de_est, de_art, de_fmov);
+
+//
+// Saldos por estado
+//
+table salest						descr "Saldos de stock         "
+{
+	se_suc		num(2)			descr "Sucursal                "
+								,
+	se_art		num(9)			descr "Código de catálogo      "
+								,
+	se_est		char(5)			descr "Código de estado        "
+								not null,
+	se_astc		char(2)			descr "Asignación tipo compr.  "
+								,
+	se_asop		num(2)			descr "Asignación operación    "
+								,
+	se_asnro	num(9)			descr "Asignación nro movimiento"
+								,
+	se_item		num(4)			descr "Item Efectado           "
+								,
+	se_scant	num(9)	  		descr "Cantidad de Unidades    "
+								not null default 0,
+	se_cpie		num(9)	  		descr "Cantidad de Piezas      "
+								not null default 0,
+	se_fmov		date			descr "Fecha de Alta           "
+								,
+	se_fcan		date			descr "Fecha finalización      "
+								,
+	se_mcan		bool			descr "Cancelado ?             "
+								,
+	se_conso 	num(9)			descr "Partida /Consolidado    "
+								,
+	se_enti		num(6)			descr "Entidad                 "
+								,
+	se_lote		char(15)		descr "Lote de la partida      "
+								,
+	se_folio	char(10)		descr "Folio de la partida     "
+								,
+	se_test		num(1)			descr "Tipo de estado          "
+								,
+	se_cant		num(9)			descr "Cantidad Original       "
+								not null default 0
+								,
+	se_uxb		num(4)			descr "Unidad x Bulto Original "
+								default 1
+								,
+	se_udad		char(1)			descr "Tipo de unidad          "
+								,
+	se_uda     char(15)         descr "Unidad de Almacenamiento"
+								,
+	se_clavor   char(80)        descr "Clave de Ordenamiento   " 
+								,
+	se_area     num(4)          descr "Codigo de Area asignado " 
+								,
+	se_fvenc    date            descr "Vencimiento del producto"
+								,
+}
+primary key  ( se_suc, se_art, se_est, se_astc , se_asop, se_asnro, se_item),
+index aplica ( se_suc, se_astc, se_asop, se_est, se_asnro, se_art ),
+index xrefer ( se_suc, se_astc, se_asop, se_asnro, se_est, se_art ),
+index estado ( se_suc, se_est, se_art, se_astc, se_asop, se_asnro ),
+index consu  ( se_mcan, se_suc, se_est, se_art),
+index conso  ( se_suc, se_conso, se_art, se_est);
+
+//
+// Cabecera de movimiento de stock
+table tcabest						descr "Cabecera movimiento stock-Temporal"
+{
+	tce_suc			num(2)			descr "Sucursal                "
+									,
+	tce_tcom		char(2)			descr "Tipo de comprobante     "
+									not null,
+	tce_ope			num(2)			descr "Operación               "
+									not null,
+	tce_nmov		num(9)			descr "Número de movimiento    "
+									>0 not null,
+	tce_fmov		date			descr "Fecha de movimiento     "
+									not null,
+	tce_dmov		char(40)		descr "Descr. del movimiento   "
+									,
+	tce_tsuc		num(2)			descr "Sucursal Transferencia   "
+									,
+	tce_tenti		char(1)			descr "Tipo Entidad            "
+									,
+	tce_enti		num(6)			descr "Entidad                 "
+									,
+	tce_tcext		char(2)			descr "Tipo comprobante externo    "
+									,
+	tce_nroext		char(21)		descr "Número de comprobante externo   "
+									,
+	tce_hmov		time			descr "Hora de movimiento       "
+									,
+	tce_conso		num(9)			descr "Partida /Consolidado    "
+									,
+	tce_emp			num(2)			descr "Empresa                 "
+									not null
+									,
+	tce_astc		char(2)			descr "Tipo comp. asignación   "
+									,
+	tce_asop		num(2)			descr "Operación asignación    "
+									,
+	tce_asnro		num(9)			descr "Número de asignación    "
+									,
+	tce_daux1		char(40)		descr "Descripcion Auxiliar 1  "
+									,
+	tce_tenaux1		char(1)			descr "Tipo de Entidad Auxiliar"
+									,
+	tce_enaux1		num(6)			descr "Entidad Auxiliar 1      "
+									,
+	tce_uda         char(15)        descr "Unidad de Almacenamiento "
+									,
+	tce_clavor      char(80)        descr "Clave de Ordenamiento    " 
+									,
+	tce_plan        num(6)          descr "Planilla                 "  
+									,
+	tce_sualm       char(15)        descr "Sub-Unidad Almacenamiento" 
+									,
+	tce_opera       num(6)          descr "Codigo Entidad operador  "
+									,
+}
+primary key  ( tce_suc, tce_tcom , tce_ope , tce_nmov),
+index fmov   ( tce_suc, tce_fmov),
+index enti   ( tce_enti, tce_suc, tce_tcom , tce_ope , tce_nmov);
+
+//
+// Detalle de movimiento de stock
+//
+table tdetest						descr "Detalle movimiento stock - Temporal"
+{
+	tde_suc		num(2)				descr "Sucursal                "
+									not null,
+	tde_tcom	char(2)				descr "Tipo de comprobante     "
+									not null,
+	tde_ope		num(2)				descr "Operación               "
+									not null,
+	tde_nmov	num(9)				descr "Número de movimiento    "
+									>0 not null,
+	tde_art		num(9)				descr "Código de articulo      "
+									not null,
+	tde_udad	char(1)				descr "Tipo de unidad          "
+									,
+	tde_cant	num(9)				descr "Cantidad                "
+									not null default 0,
+	tde_tpre	num(2)				descr "Tipo de precio          "
+									not null default 0,
+	tde_valu	num(9,4)			descr "Valor Unitario          "
+									not null default 1,
+	tde_item	num(4)				descr "Item de renglon         "
+									> 0 not null,
+	tde_cpie	num(9)	 			descr "Cantidad de piezas            "
+									not null
+									default 0,
+	tde_pedi	num(9)				descr "Pedido Afectado    "
+									,
+	tde_itped	num(4)				descr "Item Pedido Afectado    "
+									,
+	tde_fvenc	date				descr "Vencimiento del producto"
+									,
+	tde_uxb		num(4)				descr "Unidad por Bulto"
+									default 1
+									not null,
+	tde_codbar	char(21)				descr "Codigo barra usada"
+									,
+	tde_est		char(5)				descr "Estado afectado         "
+									not null,
+	tde_lote	char(15)			descr "Lote de la Partida      "
+									,
+	tde_folio	char(10)			descr "Folio de la Partida     "
+									,
+	tde_enti	num(6)				descr "Entidad                  "
+									,
+	tde_sec		num(4)				descr "Secuencia/afectación    "
+									>= 0 not null,
+	tde_itas		num(4)		 	descr "Item de renglon asignado "
+									> 0 not null,
+	tde_uda    char(15)             descr "Unidad de Almacenamiento "
+									,
+	tde_clavor  char(80)            descr "Clave de Ordenamiento     "   
+									,
+	tde_plan    num(6)              descr "Planilla                  "   
+									,
+	tde_sualm   char(15)            descr "Sub-Unidad de Almacenamiento" 
+									,
+}
+primary key ( tde_suc, tde_tcom, tde_ope, tde_nmov, tde_item, tde_sec);
+
+//
+// Saldos por estado / Referencia
+//
+table refest					descr "Saldos de Estados de referencia "
+{
+	re_suc		num(2)			descr "Sucursal                "
+								,
+	re_est		char(5)			descr "Código de estado        "
+								not null,
+	re_astc		char(2)			descr "Asignación tipo compr.  "
+								,
+	re_asop		num(2)			descr "Asignación operación    "
+								,
+	re_asnro	num(9)			descr "Asignación nro movimiento"
+								,
+	re_scant	num(9)	  		descr "Cantidad de Unidades    "
+								not null default 0
+								,
+	re_conso 	num(9)			descr "Partida /Consolidado    "
+								,
+	re_enti		num(6)			descr "Entidad                 "
+								,
+}
+primary key  ( re_suc, re_est, re_astc , re_asop, re_asnro ),
+index xrefer ( re_suc, re_astc, re_asop, re_asnro, re_est  );
+
+//
+// Trazabilidad de Referencia
+//
+table trazaref					descr "Trazabilidade de Referencias "
+{
+	tr_suc		num(2)			descr "Sucursal                "
+								,
+	tr_rftc		char(2)			descr "Tipo Comprobante de Referencia"
+								,
+	tr_rfop		num(2)			descr "Operación de la referencia    "
+								,
+	tr_rfnro	num(9)			descr "Nro de Referencia             "
+								,
+	tr_secu		num(4)	  		descr "Nro de Secuencia en la refer. "
+								,
+	tr_tcom		char(2)			descr "Tipo de Comprobante Generado  "
+								,
+	tr_ope		num(2)			descr "Operacion de Comprob Generado "
+								,
+	tr_nro		num(9)			descr "Numero de Comprobante Generado"
+								,
+	tr_usu		char(15)		descr "Usuario que genero comprobante"
+								,
+	tr_fing		date			descr "Fecha de Ingreso Comprobante  "
+								,
+	tr_hing		time			descr "Hora de Ingreso de Comprobante"
+								,
+	tr_enti		num(6)			descr "Entidad                 "
+								,
+	tr_fec		date			descr "Fecha del Comprobante  "
+								,
+	tr_hora		time			descr "Hora del Comprobante"
+								,
+}
+primary key  ( tr_suc, tr_rftc, tr_rfop, tr_rfnro, tr_secu ),
+index xevento( tr_suc, tr_fec, tr_hora ),
+index xusua  ( tr_suc, tr_usu , tr_fec, tr_hora),
+index xenti  ( tr_suc, tr_enti, tr_fec, tr_hora);
+
+//
+// Bloqueo de Saldos por estado
+//
+table bloqsal					descr "Bloqueo de Saldos       "
+{
+	bs_suc		num(2)			descr "Sucursal                "
+								,
+	bs_art		num(9)			descr "Código de catálogo      "
+								,
+	bs_est		char(5)			descr "Código de estado        "
+								not null,
+	bs_astc		char(2)			descr "Asignación tipo compr.  "
+								,
+	bs_asop		num(2)			descr "Asignación operación    "
+								,
+	bs_asnro	num(9)			descr "Asignación nro movimiento"
+								,
+	bs_item		num(4)			descr "Item Efectado           "
+								,
+	bs_pgm		char(15)		descr "Programa que bloquea    "
+								,
+	bs_usua		char(15)		descr "Usuario que bloquea     "
+								,
+	bs_fing		date			descr "Fecha de Bloqueo        "
+								,
+	bs_hing		time			descr "Hora de Bloqueo         "
+								,
+	bs_pid		num(9)			descr "Pid que bloquea         "
+								,
+	bs_clave    char(80)        descr "Orden de operacion      " 
+								,
+	bs_area     num(4)          descr "Codigo de Area asignado "
+								,
+	bs_recor    num(4)          descr "Codigo de Recorrido     "
+								,
+	bs_cant     num(9)          descr "Asignación nro movimiento" 
+								,
+}
+primary key  ( bs_suc, bs_art, bs_est, bs_astc , bs_asop, bs_asnro, bs_item),
+index xusua  ( bs_suc, bs_usua, bs_astc, bs_asop, bs_asnro, bs_est, bs_art ),
+index xpid   ( bs_suc, bs_pid , bs_astc, bs_asop, bs_asnro, bs_est, bs_art ),
+index xrefe  ( bs_suc, bs_astc, bs_asop, bs_asnro, bs_est, bs_art ),
+index xpida  ( bs_suc, bs_pid ,  bs_est, bs_art,bs_astc, bs_asop, bs_asnro ,bs_item),
+index aplica ( bs_suc, bs_astc, bs_asop, bs_est, bs_asnro, bs_art ),
+index estado ( bs_suc, bs_est, bs_art, bs_astc, bs_asop, bs_asnro ),
+index xclave ( bs_suc, bs_est , bs_pid , bs_clave );
+
+table tapas descr "Tabla Auxiliar de Tapas"
+{
+	tap_nro		num(9)		descr "Numero de Tapa"
+							not null,
+	tap_fec     date        descr "Fecha de Generacion Tapa"
+							not null,
+	tap_est     char(1)     descr "Estado de la Tapa"
+							in ("T":"Transito", "R":"Recibido con Diferencias", "C":"Completo")
+							not null default "T",
+	tap_fcie    date		descr "Fecha de Cumplimiento de la Tapa"
+							,
+}
+primary key(tap_nro),
+index estado(tap_est, tap_nro),
+index fecha(tap_fec, tap_nro);
+
+//
+// Saldos por estado y UALM
+//
+table salualm					descr "Saldos de estados por UALM"
+{
+	seu_suc		num(2)			descr "Sucursal                "
+								,
+	seu_art		num(9)			descr "Código de catálogo      "
+								,
+	seu_est		char(5)			descr "Código de estado        "
+								not null,
+	seu_astc	char(2)			descr "Asignación tipo compr.  "
+								,
+	seu_asop	num(2)			descr "Asignación operación    "
+								,
+	seu_asnro	num(9)			descr "Asignación nro movimiento"
+								,
+	seu_item	num(4)			descr "Item Efectado           "
+								,
+	seu_ualm	char(15)		descr "Unidad de Almacenamiento"
+								,
+	seu_scant	num(9)	  		descr "Cantidad de Unidades    "
+								not null default 0,
+	seu_cpie	num(9)	  		descr "Cantidad de Piezas      "
+								not null default 0,
+	seu_fmov	date			descr "Fecha de Alta           "
+								,
+	seu_conso 	num(9)			descr "Partida /Consolidado    "
+								,
+	seu_enti	num(6)			descr "Entidad                 "
+								,
+	seu_lote	char(15)		descr "Lote de la partida      "
+								,
+	seu_folio	char(10)		descr "Folio de la partida     "
+								,
+	seu_test	num(1)			descr "Tipo de estado          "
+								,
+	seu_fvenc	date			descr "Fecha de Alta           "
+								,
+	seu_plan	num(6)			descr "Planila                 "           
+								,
+	seu_sualm	char(15)		descr "Sub-Unidad Almacenamiento"
+								,
+}
+primary key  ( seu_suc , seu_art  , seu_est   , seu_astc , seu_asop , seu_asnro, seu_item, seu_ualm)[173],
+index aplica ( seu_suc , seu_astc , seu_asop  , seu_est  , seu_asnro, seu_art )[96],
+index xrefer ( seu_suc , seu_astc , seu_asop  , seu_asnro, seu_est  , seu_art )[96],
+index estado ( seu_suc , seu_est  , seu_art   , seu_astc , seu_asop , seu_asnro )[96],
+index conso  ( seu_suc , seu_conso, seu_art   , seu_est)[82],
+index xualm  ( seu_suc , seu_ualm , seu_est   , seu_astc , seu_asop, seu_asnro)[146],
+index xvenc  ( seu_suc , seu_art  , seu_fvenc , seu_est  , seu_plan)[96],
+index xevenc ( seu_suc , seu_art  , seu_est   , seu_fvenc, seu_plan)[96],
+index xubic  ( seu_suc , seu_art  , seu_est   , seu_plan , seu_fvenc)[96],
+index xsualm ( seu_suc , seu_sualm, seu_est   , seu_astc , seu_asop, seu_asnro)[96];
+
+//
+// Relacion de Referencia con Unidad de Almacenamiento
+//
+table refual					descr "Relacion de referencia vs UALM "
+{
+	ru_suc		num(2)			descr "Sucursal                "
+								,
+	ru_astc		char(2)			descr "Asignación tipo compr.  "
+								,
+	ru_asop		num(2)			descr "Asignación operación    "
+								,
+	ru_asnro	num(9)			descr "Asignación nro movimiento"
+								,
+	ru_ualm		char(15)		descr "Unidad de Almacenamiento "
+								,
+	ru_enti		num(6)			descr "Entidad                 "
+								,
+	ru_conso 	num(9)			descr "Partida/Consolidado/Hoja Ruta"
+								,
+	ru_usua		char(15)		descr "Usuario que Modifica      "
+								,
+	ru_fing		date			descr "Fecha de Modifica         "
+								,
+	ru_hing		time			descr "Hora de Modifica          "
+								,
+}
+primary key  ( ru_suc, ru_ualm, ru_astc, ru_asop, ru_asnro )[25],
+index xrefer ( ru_suc, ru_astc, ru_asop, ru_asnro, ru_ualm)[25],
+index xconso ( ru_conso, ru_suc, ru_ualm, ru_astc, ru_asop, ru_asnro)[29],
+index xfecha ( ru_ualm, ru_fing, ru_hing)[22];
+
+//
+// Autorizacion Dias Minimos en Ingresos de Mercaderia
+//
+table autingr					descr "Autorizacion Dias en Ingresos "
+{
+	ain_suc		num(2)			descr "Sucursal                      "
+								not null,
+	ain_art		num(9)			descr "Articulo                      "
+								not null,
+	ain_faut	date			descr "Fecha Autorizada              "
+								not null,
+	ain_dven	num(3)			descr "Dias de Vencimiento Autorizado"
+								default 0
+								not null,
+	ain_dvenp	num(3)			descr "Días de Vencimiento Parametro "
+								default 0
+								not null,
+	ain_mot		char(50)		descr "Motivo de Autorizacion        "
+								,
+	ain_usua	char(15)		descr "Usuario que Autorizo          "
+								,
+	ain_feca	date			descr "Fecha de Autorizacion         "
+								,
+	ain_hora	time			descr "Hora de Autorizacion          "
+								,
+}
+primary key (ain_suc, ain_art, ain_faut);
+
+/// INTERFAS DE VENTAS
+
+create schema forumvta descr "Sub-Esquema de Ventas de FORUM"
+                    language "C";
+
+table tipcli  					descr "Tipo de Clientes                  "
+{
+	tip_cod	  		num(2)		descr "Tipo de Cliente                   "
+								not null,
+	tip_desc		char(30)	descr "Descripción                       "
+				  				,
+	tip_balc		bool		descr "Expende Bebidas Alcohólicas       "
+								default false,
+	tip_recf		num(5,2)	descr "Porcentaje de recargo Fraccionado "
+									,
+}
+primary key (tip_cod);
+
+table catebo					descr "Categorías de Bonificación        "
+{
+	cat_cat	 		num(2)		descr "Código de Categoría               "
+				  				not null,
+	cat_des			char(30)	descr "Descripción                       "
+				 				,
+	cat_tip			num(1)		descr "Tipo de Bonificación/Recargo      "
+								not null
+					  			in (1:"No lleva",
+									2:"Lleva porcentaje",
+									3:"Lleva lista especial"),
+	cat_por			num(5,2)	descr "Porcentaje                        "
+								default 0,
+}
+primary key (cat_cat);
+
+table con_pago					descr "Condiciones de Pago               "
+{
+	cpa_cod			num(2)		descr "Código Condición de Pago          "
+								not null,
+	cpa_des			char(30)	descr "Descripción                       "
+								,
+	cpa_tpre[10]	num(2)		descr "Tipo de Precio                    "
+								,
+	cpa_porr[10]	num(5,2)	descr "Porcentaje de recargo             "
+								,
+	cpa_credi		num(1)		descr "Afectación de Crédito             "
+								in (1:"NO Controla Crédito",
+									2:"Controla Crédito")
+						  		default 1
+					  			not null,
+	cpa_rpie		num(5,2)	descr "Porc. Recargo/Bonificación al pie "
+								default 0.0,
+	cpa_dias		num(3)		descr "Días para Vencimiento             "
+								,
+	cpa_top	  		num(15,2)	descr "Importe Mínimo p/Cálculo Rec/Bonif al pie"
+								default 0.0,
+	cpa_mpag[10]	char(3)		descr "Posibles Medios de Pagos por Condición"
+								,
+	cpa_tipo		num(1)		descr "Tipo Comprobante           "
+								in (1:"Factura",
+									2:"Presupuesto")
+						  		default 1
+					  			not null,
+	cpa_topi  		num(15,2)	descr "Importe Tope para Impresion "
+								,
+	cpa_mpro		num(1)		descr "Modo de manejo de promos"
+								in (0:"Normal, Calcula Promos", 1:"Sin Promo")
+								default 0
+								,
+	cpa_conofe		bool		descr "Permite Ofertas?  "
+								default true
+								,
+	cpa_cprom[10]	bool		descr "Tipo Precio con Promo? "
+								,
+}
+primary key (cpa_cod);
+
+table tvcop				  		descr "Relación Tipo de Venta-Condición de Pago"
+{
+	tvc_tvta  		num(1)		descr "Tipo de Venta                     "
+								/* ver forumcnf.sc - ftvta */
+				  				not null,
+	tvc_cpag		num(2)		descr "Condición de Pago                 "
+				  				in con_pago:cpa_des
+								not null,
+	tvc_conc		char(3)		descr "Concepto a imputar                "
+								not null,
+	tvc_concr		char(3)		descr "Concepto para referenciar (NC)    "
+	            	            ,
+	tvc_ent			char(1)		descr "Afectación de Entidad             "
+					  			default "C",
+}
+primary key (tvc_tvta, tvc_cpag),
+index cpago (tvc_cpag, tvc_tvta);
+
+table regiones 	 					descr "Regiones para Entrega            "
+{
+	reg_cod	  	char(2)				descr "Código de Región                 "
+									not null,
+	reg_desc	char(30)			descr "Descripción                      "
+									,
+	reg_pagi	num(3)				descr "Pagina de Inicioen Filcar        "
+									,
+}
+primary key (reg_cod);
+
+
+table zona	 					descr "Zonas de Clientes                 "
+{
+	zon_reg			char(2)		descr "Código de Región                  "
+								not null
+								in regiones:reg_desc,
+	zon_cod			num(3)		descr "Código de Zona                    "
+								not null,
+	zon_desc		char(30)	descr "Descripción                       "
+								,
+	zon_orden		num(4)		descr "Orden Pre-Establecido             "
+								not null,
+}
+primary key (zon_reg, zon_cod);
+
+table clientes					descr "Maestro de Clientes               "
+{
+	cli_cod			num(6)		descr "Código de Cliente                 "
+								,
+	cli_nom			char(40)	descr "Nombre del cliente                "
+								,
+	cli_suc			num(2)		descr "Código de Sucursal                "
+								not null, 
+	cli_lipr		num(1)		descr "Lista que utiliza                 "
+								default 0
+								not null,
+	cli_fac			num(9)		descr "Ultimo Nro de Factura             "
+								,
+	cli_rub			num(2)		descr "Rubro Comercial                   "
+								,
+	cli_tven		char(1)		descr "Tipo Entidad Vendedor Habitual    "
+								in ("V":"Vendedor",
+									"T":"Transportista"), 
+	cli_ven			num(6)		descr "Vendedor Habitual                 "
+								,
+	cli_tcob		char(1)		descr "Tipo entidad Cobrador habitual    "
+								in ("O":"Cobrador"),
+	cli_cob			num(6)		descr "Cobrador Habitual                 "
+								,
+	cli_zon			num(3)		descr "Zona del Cliente                  "
+								in zona(cli_reg):zon_desc,
+	cli_tip			num(2)		descr "Tipo de Cliente                   "
+								in tipcli:tip_desc,
+	cli_cat			num(2)		descr "Categoría de Bonificación         "
+								in catebo:cat_des,
+	cli_cvta[10]	num(2)		descr "Condición de venta usual          "
+								in con_pago:cpa_des,
+	cli_usua		char(10)	descr "Usuario                           "
+								,
+	cli_revta		num(5,2)	descr "Recargo por Ventas                "
+								default 0,
+	cli_mcvta		bool		descr "Cond.de Vta. Asignada Obligatoria?"
+								default false,
+	cli_fmod		date		descr "Fecha de modificación             "
+								,
+	cli_pfle		num(5,2)	descr "Porcentaje de Flete               "
+								default 0,
+	cli_facadi		num(3)		descr "Cantidad Copias Facturas Adicionales a Emitir"
+								default 0,
+	cli_tvta		char(1)     descr "Tipo de Venta del Cliente         "
+								/* ver forumcnf.sc - fcvta */
+							   	default "1",
+	cli_ptyt		num(5,2)	descr "Porcentaje de Tickets y Tarjetas  "
+								default 0,
+	cli_itar		bool		descr "Incluye Tarjetas ?                "
+								default false,                          
+	cli_itic		bool		descr "Incluye Tickets ?                 "
+								default false,
+	cli_tcalc		char(1)		descr "Tipo de Cálculo                   "
+								mask ">A"
+								in("D":"Diario", "M":"Mensual")
+								default "D",
+	cli_posnet		bool		descr "Opera con Pos-Net?                "
+								default false,
+	cli_fdde		date		descr "Fecha desde                       "
+								,
+	cli_term		num(8)		descr "Número de Terminal                "
+								,
+	cli_sucpn		num(3)		descr "Nro.Sucursal Pos-Net              "
+								,
+	cli_costo		num(10,2)	descr "Costo del Servicio                "
+								default 0.0,
+	cli_fultd		date		descr "Fecha de Ultimo Débito            "
+								,
+	cli_habf		bool		descr "Habilita cobro de Fraccionamiento?"
+								default false
+								,
+	cli_domcom		char(40)	descr "Domicilio Comercial               "
+								,
+	cli_ccte		bool		descr "Cuenta Corriente ?                "
+								default false,
+	cli_ncta		char(10)	descr "Número de cta/cte                 "
+								,
+	cli_banco		char(40)	descr "Banco                             "
+								,
+	cli_dbco		char(40)	descr "Dirección del Banco               "
+								,
+	cli_tbco		char(20)	descr "Teléfono del Banco                "
+								,
+	cli_falta		date		descr "Fecha de Alta                     "
+								default today,
+	cli_fuc			date		descr "Fecha de última compra            "
+								,
+	cli_reg			char(2)		descr "Región del Cliente                "
+								in regiones:reg_desc
+								,
+	cli_lise		num(2)		descr "Lista Especial si Cat.Bon.es 3    "
+								,
+	cli_flete		bool		descr "Recarga Flete?                    "
+								default false
+								,
+	cli_pag			num(3)		descr "Pagina FILCAR                     "
+								//in cuadro(cli_reg,cli_zon)
+								,
+	cli_fila		char(2)		descr "Fila en Pagina FILCAR             "
+								,
+	cli_colum		char(2)		descr "Colunma en Pagina FILCAR          "
+								,
+	cli_mrem		bool		descr "Marca de Emision Remito           "
+								default false,
+	cli_reventa		bool		descr "Es reventa?                       "
+								default false,
+	cli_palba		bool		descr "Tiene PRIORIDAD DE ENTREGA        "
+								default false,
+	cli_varios		bool		descr "Es cliente varios?                "
+								default false,
+	cli_stip		num(2)		descr "Sub-Tipo de Cliente               "
+								, /* ver forumcnf.sc - stipcli */
+	cli_tprei		num(2)		descr "Tipo de Precio de arranque        "
+								,
+	cli_ifle		num(11,2)	descr "Importe Fijo de Flete             "
+								default 0.0
+								,
+}
+primary key  (cli_cod),
+index porsuc (cli_suc, cli_cod),
+index zona   (cli_reg, cli_zon, cli_cod);
+
+
+table cabped		 			descr "Tabla Cabecera de Pedidos         "
+{
+	cap_suc			num(2)		descr "Código de Sucursal                "
+								default $codsuc,
+	cap_tip			char(2)		descr "Tipo de Comprobante               "
+				  				default "FC"
+								not null,
+	cap_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				default 01,
+	cap_ped			num(9)		descr "Número de Factura                 "
+								not null,
+	cap_fec			date		descr "Fecha de la Pedido                "
+								not null,                          
+	cap_hora		time		descr "Hora de Pedido                    "
+								,
+	cap_clie		num(6)		descr "Número de Cliente                 "
+								,
+	cap_cpag  		num(2)		descr "Condición de Pago                 "
+								in con_pago : cpa_des 
+				  				not null,
+	cap_fac			num(3)		descr "Código de Facturista              "
+								,
+	cap_com			num(6)		descr "Código de Comisionista/Vendedor   "
+				  				,
+	cap_lis			num(2)		descr "Lista utilizada                   "
+								default 0
+								not null,
+	cap_tgra		num(11,2)	descr "Total Gravado                     "
+								default 0
+								not null,
+	cap_fle			bool		descr "LLeva Flete?                      "
+								,
+	cap_itot		num(11,2)	descr "Total del comprobante             "
+	  							default 0.0,
+	cap_obs			char(80)	descr "Observaciones                     "
+								,
+	cap_it			num(4)		descr "Cantidad de items del comprobante "
+								,
+	cap_nom	  		char(40)	descr "Nombre del cliente                "
+								,
+	cap_lugent		num(2)		descr "Lugar de Entrega                  "
+								,
+	cap_cpos		num(4)		descr "Código Postal                     "
+	  				  			,
+	cap_cmp			char(1)		descr "Código de Provincia               "
+								,
+	cap_reg			char(2)		descr "Región de Venta                   "
+								,
+	cap_zon			num(3)		descr "Zona de Venta                     "
+								,
+	cap_orde		num(9)		descr "Orden de Entrega                  "
+								,
+	cap_costo		num(11,2)	descr "Total Costo                       "
+				 				default 0.0,                           
+	cap_entip		num(6)		descr "Número de Entidad Pagadora        "
+								,
+	cap_tkgsn		num(10,3)	descr "Total de Kilos Netos              "
+								default 0.0,
+	cap_emp			num(2)		descr "Empresa que Pre-Factura           "
+								not null
+								default 0,
+	cap_conso		num(9)		descr "Numero Consolidado                "
+								default 0
+								not null,
+	cap_cbul		num(6)		descr "Cantidad de Bultos en Comprobante "
+								default 0,
+	cap_cbar		char(14)	descr "Código de Barra para Impresión    "
+								,
+	cap_usu			char(15)	descr "Usuario que dio de alta           "
+								,
+	cap_fing		date		descr "Fecha de grabacion                "
+								not null,
+	cap_hing		time		descr "Hora de grabación                 "
+								,
+	cap_prob		bool		descr "Problemas del Cliente             "
+                                default false,
+    cap_crexed    	bool		descr "Credito Exedido del Cliente       "
+                                default false,
+	cap_fvenc		date		descr "Fecha de Vencimiento              "
+								default Today,
+	cap_tipo		num(4)		descr "Tipo de articulo(art_mva)         "
+								default 0
+								not null,
+	cap_origen		num(9)		descr "Origen de Pedido, Nro Orden       "
+								,
+    cap_est			char(1)		descr "Estado de Pedido                  "
+    							default "P",
+	
+	cap_imp			bool		descr "Marca de Impresion                "
+								default false,
+	cap_idpago		num(13)		descr "ID del pago."
+								,
+	cap_tpago		char(11)	descr "Tipo de pago credit_card, ticket "
+								,
+	cap_opnro		num(13)		descr "Orden de Pago Nro."
+								,
+	cap_prefe		char(50)	descr "Descrip.Ref.Pago"
+								,
+	cap_procp		num(1)		descr "Se proceso el pago"
+								default 0
+								,
+	cap_dire		char(50)	descr "Dirección                     "
+									,
+	cap_loc			char(30)	descr "Localidad-Barrio              "
+									,
+	cap_cdir		char(30)	descr "Complemento Direccion         "
+									,
+	cap_fent		date		descr "Fecha de Entrega"
+								,
+	cap_hent		time		descr "Hora de Entrega desde"
+								,
+	cap_henth		time		descr "Hora de Entrega hasta"
+								,
+
+}
+primary key  (cap_suc, cap_tip, cap_stip, cap_ped),
+index fecha  (cap_suc, cap_fec, cap_ped),
+index cliente(cap_clie, cap_fec),
+index pedi   (cap_suc, cap_conso, cap_ped),
+index empre  (cap_emp, cap_suc, cap_ped),
+index codbar (cap_cbar),
+index origen (cap_origen, cap_suc, cap_ped),
+index estado (cap_est, cap_suc, cap_ped),
+index comis  (cap_suc, cap_com, cap_ped),
+index xeszon (cap_suc, cap_est, cap_reg, cap_zon, cap_ped );
+
+table detped					descr "Detalle de Pedidos                "
+{
+	dep_suc			num(2)		descr "Código de Sucursal                "
+								not null,
+	dep_tip			char(2)		descr "Tipo de Comprobante               "
+								not null,
+	dep_stip		num(2)		descr "Subtipo de Comprobante            "
+								,
+	dep_ped			num(9)		descr "Número de Factura                 "
+								in cabped (dep_suc, dep_tip, dep_stip),
+	dep_art			num(9)		descr "Código de Articulo                "
+								not null,
+	dep_ite			num(4)		descr "Número de Item                    "
+								default 0
+								not null,
+	dep_tpre		char(2)		descr "Tipo/observacion de Precio        "
+								,
+	dep_prec		num(9,4)	descr "Precio de Venta Unitario          "
+								default 0
+								not null,
+	dep_precp 		num(9,4)	descr "Precio de Venta Pactado"
+								default 0
+	  							,
+   	dep_plista		num(9,4)	descr "Precio de Lista(Neto sin recargos)"
+								default 0,  
+	dep_cost		num(9,4)	descr "Precio de compra Pre-Facturado    "
+								default 0
+								not null,
+	dep_accion		num(3)		descr "Número de Acción Promocional      "
+								,
+	dep_promo		num(3)		descr "Número de Promoción               "
+								,
+	dep_cant		num(9,3)	descr "Cantidad                          "
+								not null,
+	dep_udad		char(1)		descr "Unidad                            "
+								/* ver forumcnf.sc - fudad */
+								not null,
+	dep_scan		num(9)		descr "Cantidad en unidades              "
+								default 0
+								not null,
+	dep_cpie		num(9)		descr "Cantidad de piezas                "
+								default 0
+								not null,
+	dep_obs			char(50)	descr "Observaciones                     "
+								,
+	dep_fam			num(2)		descr "Familia                           "
+				  				,
+	dep_dep			num(2)		descr "Departamento                      "
+				  				,
+	dep_sec			num(2)		descr "Sección                           "
+					  			,
+	dep_gru			num(2)		descr "grupo                             "
+								,
+	dep_fec			date		descr "Fecha del Movimiento              "
+								,
+	dep_cbar		char(15)	descr "Código de Barras                  "
+								,
+	dep_kgsn		num(10,3)	descr "Kilos Netos                       "
+								default 0.0,
+	dep_disp		num(9)		descr "Cantidad Disponible               "
+								default 0,
+    dep_motfal		char(1)		descr "Motivo de Faltante                "
+								,
+	dep_scanf		num(9)		descr "Cantidad en unidades Faltantes    "
+								not null
+								default 0
+								>=0,
+	dep_prov		num(6)		descr "Código de Proveedor               "
+								,
+	dep_clie		num(6)		descr "Codigo  de Cliente                "
+								,
+	dep_com			num(6)		descr "Codigo de Comisionista/Vendedor   "
+								,
+}
+primary key (dep_suc, dep_tip, dep_stip, dep_ped, dep_ite, dep_art),
+index fec (dep_suc, dep_fec, dep_ped),
+index art (dep_suc, dep_art, dep_fec);
+
+
+table factu						descr "Tabla Cabecera de Facturas        "
+{
+	fac_suc			num(2)		descr "Código de Sucursal                "
+								default $codsuc,
+	fac_tip			char(2)		descr "Tipo de Comprobante               "
+				  				default "FC"
+								not null,
+	fac_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				default 01,
+	fac_nro			num(9)		descr "Número de Factura                 "
+								not null,
+	fac_fec			date		descr "Fecha de la Factura               "
+								not null,
+	fac_clie		num(6)		descr "Número de Cliente                 "
+								,
+	fac_fped 		date		descr "Fecha del Pedido                  "
+								default today,
+	fac_nrep		num(9)		descr "Número de Reparto                 "
+								,
+	fac_cpag  		num(2)		descr "Condición de Pago                 "
+								in con_pago : cpa_des 
+				  				not null,
+	fac_iva			num(1)		descr "Categoría de Iva                  "
+								not null,
+	fac_caja		num(2)		descr "Número de Caja                    "
+			  					,
+	fac_caj			num(2)		descr "Código de Cajero                  "
+								default $CAJERO,
+	fac_fac			num(3)		descr "Código de Facturista              "
+								,
+	fac_sec			char(4)		descr "Sector Operativo                  "
+								default $SECTOR,
+	fac_tven		char(1)		descr "Tipo de entidad ventas            "
+								in ("T":"Transportista",
+					  				"V":"Vendedor     "),
+	fac_com			num(6)		descr "Código de Transportista           "
+				  				,
+	/* comprobante relacionado */
+	fac_tdev  		char(2)		descr "Tipo Devolución                   "
+								,
+	fac_sdev		num(2)		descr "SubTipo Devolución                "
+								,
+	fac_ndev		num(9)		descr "Número Devolución                 "
+								,
+	fac_fdev		date		descr "Fecha Devolución                  "
+								,
+	fac_des			num(5,2)	descr "% de Descuento                    "
+								default 0
+								not null,
+	fac_reccp		num(5,2)	descr "% Recargo por condición de pago   "
+								default 0
+					  			not null,
+	fac_recvt		num(5,2)	descr "% Recargo para precios de venta   "
+				  				default 0
+								not null,
+	fac_recof		num(5,2)	descr "% Recargo para precios de oferta  "
+								default 0
+								not null,
+	fac_recun		num(5,2)	descr "% Recargo por unidad              "
+				  				default 0
+								not null,
+	fac_lis			num(2)		descr "Lista utilizada                   "
+								default 0
+								not null,
+	/* Mercadería */
+	fac_tgra		num(11,2)	descr "Total Gravado                     "
+								default 0
+								not null,
+	fac_teiva		num(11,2)	descr "Total Exento                      "
+				 				default 0
+								not null,
+	fac_rpie		num(11,2)	descr "Recargo al pie                    " 
+								default 0.0,
+	/* Fletes */
+	fac_fle			bool		descr "LLeva Flete?                      "
+								,
+	fac_flca		bool		descr "A cargo del cliente?              "
+								,
+	fac_flet		num(6)		descr "Fletero                           "
+								,
+	fac_flpo		num(5,2)	descr "Porcentaje por Flete              "
+								default 0,
+	fac_ifle		num(11,2)	descr "Importe Flete                     "
+								default 0.0,
+	/* Impuestos */
+	fac_tiva  		num(11,2)	descr "Total IVA Inscripto               "
+								default 0
+				  				not null,
+	fac_tniva		num(11,2)	descr "Total IVA No Inscripto            "
+								default 0
+				 				not null,
+	fac_tivap		num(11,2)	descr "Total IVA Ley 3337/91             "
+								default 0
+				 				not null,
+	fac_tiint		num(11,2)	descr "Total Impuestos Internos          "
+								default 0
+					  			not null,
+	fac_tabas		num(11,2)	descr "Total Abasto                      "
+				 				default 0 
+				  				not null,
+	fac_ipol		num(11,2)	descr "Iva Pollo                         "
+								default 0.0,	
+	fac_ingb		num(11,2)	descr "Ingresos Brutos                   "
+				  				default 0.0,
+	fac_pibbs		num(11,2)	descr "Percepción Ing.Brutos Bs.As.      "
+								default 0,
+	fac_pib14		num(11,2)	descr "Percep. Ing.Brutos (RG 14/99)     "
+								default 0.0,
+	fac_itot		num(11,2)	descr "Total del comprobante             "
+	  							default 0.0,
+	/* Otros Importes (NO suman en Factura) */
+	fac_rec			num(11,2)	descr "Total Recargo                     "
+				 				default 0.0,
+	fac_icom		num(11,2)	descr "Total Comisión                    "
+				  				default 0.0,
+	fac_imp			bool		descr "Factura Impresa?                  "
+								,
+	fac_adm			bool		descr "Marca Actualización Admin?        "
+								,
+	fac_obs			char(30)	descr "Observaciones                     "
+								,
+	fac_con1		bool		descr "Se dio aviso control 1? (Bultos-Cons Fin/Nros-Resp Insc)"
+								,
+	fac_con2		bool		descr "Se dio aviso control 2? (Rubro Comercial -Cliente/Art)"
+								,
+	fac_it			num(4)		descr "Cantidad de items del comprobante "
+								,
+	fac_revta		num(5,2)	descr "Recargo por Ventas Especiales     "
+								default 0,
+	/* Tarjetas */
+	fac_tres		char(2)		descr "Tipo de Comprobante resúmen tarjeta"
+				  				,
+	fac_ores		num(2)		descr "Operación resúmen tarjeta         "
+								,
+	fac_nres		num(9)		descr "Nro. de resúmen tarjeta           "
+								,
+	fac_hora		time		descr "Hora de grabación                 "
+								,
+	fac_dup			bool		descr "Se emitió duplicado?              "
+								default false,
+	/* Comprobante Afectado (Solo para NC) */
+	fac_faf	  		num(9)		descr "Nro. de Factura Afectada          "
+								,
+	fac_mot			num(2)		descr "Motivo de Nta. de Crédito         "
+				  				in motcre:mcr_des,
+	fac_nom	  		char(40)	descr "Nombre del cliente                "
+								,
+	fac_cpos		num(4)		descr "Código Postal                     "
+	  				  			,
+	fac_cmp			char(1)		descr "Código de Provincia              "
+								,
+	fac_cat			num(2)		descr "Categoría Bonificación           "
+								,
+	fac_zon			num(3)		descr "Zona de Venta                    "
+								,
+	fac_tvta		char(1)     descr "Tipo de Venta Cliente            "
+								default "1",
+	/* comprobante externo */
+	fac_tipop		char(1)		descr "Tipo de Operación                "
+								,
+	fac_fext		date	 	descr "Fecha comp. Externo              "
+							 	,                                       
+	fac_text		char(3)	 	descr "Libro de Iva que afecta          "
+							 	,
+	fac_lext		num(2)		descr "Tipo de Comprobante              "
+						  		,
+	fac_sext		char(4)		descr "Lugar emisión                    "
+								,
+	fac_nexti		num(9)		descr "Número comp. Externo Inicial     "
+								,
+	fac_nextf		num(9)		descr "Número comp. Externo Final       "
+								,                                       
+	fac_afest		bool		descr "Afecta a Estadistica    			"
+								default false,
+	fac_estvt		bool		descr "Modo Estadistico Ventas			 "
+								default false,
+	fac_estvc		bool		descr "Modo Estadistico Ventas-Cliente	 "
+								default false,
+	fac_estct		bool		descr "Modo Estadistico Compras			 "
+								default false,
+	fac_estcc		bool		descr "Modo Estadistico Compras-Comprador"
+								default false,
+	fac_codest[10]	char(2)		descr "Código de Estadística                "
+								,
+	fac_tcest[10]	char(1)		descr "Tipo de Comprobante para Estadisticas"
+								,
+	fac_mafest[10]	char(1)		descr "Modo de Afectación a Estadistica     "
+								,
+	fac_reg			char(2)		descr "Región de Venta                      "
+								,
+	fac_lugent		num(2)		descr "Lugar de Entrega                     "
+								,
+	fac_ncai		char(20)	descr "Código de Autorización de Impresión  "
+								,
+	fac_fvcai		date	  	descr "Fecha Vencimiento C.A.I.             "
+								,
+	fac_cfis		bool		descr "Es Comprobante Fiscal?               "
+								default false,
+	fac_costo		num(11,2)	descr "Total Costo                          "
+				 				default 0.0,
+	fac_auxf		num(3)		descr "Código de Auxiliar Facturista        "
+								,
+	fac_tivaf  		num(11,2)	descr "Total IVA Inscripto Recargo Flete    "
+								default 0
+				  				not null,
+	fac_tnivaf 		num(11,2)	descr "Total IVA No Inscripto Recargo Flete "
+								default 0
+				  				not null,
+	fac_entip		num(6)		descr "Número de Entidad Pagadora           "
+								,
+	fac_tkgsn		num(10,3)	descr "Total de Kilos Netos                 "
+								default 0.0,
+	fac_txkg		num(11,2)	descr "Tarifa de Flete por Kilo             "
+								default 0.0,
+	fac_inc			num(11,2)	descr "Total de Notas de Créditos           "
+								default 0.0,
+	fac_cnc			num(2)		descr "Cantidad Notas de Créditos Emitidas  "
+								default 0,
+	fac_emp			num(2)		descr "Empresa que factura  "
+								not null
+								default 0,
+	fac_conso		num(9)		descr "Numero Consolidado"
+								default 0
+								not null
+								,
+	fac_obsc		char(50)	descr "Observaciones de Cabecera           "
+								,
+	fac_hped 		time		descr "Hora del Pedido                      "
+								default hour,
+	fac_cbul		num(4)		descr "Cantidad de Bultos en Comprobante    "
+								default 0
+								,
+	fac_nrem		num(9)		descr "Número de Remito                "
+								,
+	fac_cbar		char(14)	descr "Código de Barra para Impresión  "
+								,
+	fac_trans		num(1)		descr "Código de Barra para Impresión  "
+								,
+	fac_stk			bool		descr "Código de Barra para Impresión  "
+								,
+	fac_hdes		char(8)		descr "Hora Inicio del comprobante     "
+								,
+	fac_hhas		char(8)		descr "Hora Final del comprobante      "
+								,
+	fac_imfis		bool		descr "Emitio en Fiscal                "
+								default false,
+	fac_estfacel	num(1)		descr "Estado de Factura Electronica"
+								default 0
+								,
+	fac_cae			char(20)	descr "C.A.E. "
+								,
+	fac_fvcae		date		descr "Vencimiento C.A.E.    "
+								,
+	fac_dom			char(40)	descr "Domicilio             "
+								,
+	fac_tdoc		num(2)		descr "Tipo de documento DGI.   "
+								,
+	fac_ndoc		num(11)		descr "Número documento DGI.    "
+								,
+}
+primary key   (fac_suc, fac_tip, fac_stip, fac_nro)[15],
+index impre   (fac_imp)[6],
+index contab  (fac_imp, fac_adm)[7],
+index fecha   (fac_fec)[7],
+index cliente (fac_clie, fac_fec)[13],
+index dup     (fac_suc, fac_faf)[11],
+index nextf   (fac_suc, fac_tip, fac_stip, fac_nextf not null)[15],
+index pedi    (fac_suc, fac_conso, fac_nrep )[17],
+index empre   (fac_emp, fac_suc, fac_nexti )[13],
+index externo (fac_emp, fac_lext, fac_sext, fac_nextf)[15],
+index codbar  (fac_cbar)[7],
+index xeszon  (fac_suc, fac_reg not null, fac_zon not null, fac_tip, fac_stip, fac_nro),
+index constk  (fac_imp,fac_adm,fac_stk);
+
+table movi_fac					descr "Movimientos de Facturas           "
+{
+	mof_suc			num(2)		descr "Código de Sucursal                "
+								not null,
+	mof_tip			char(2)		descr "Tipo de Comprobante               "
+								not null,
+	mof_stip		num(2)		descr "Subtipo de Comprobante            "
+								,
+	mof_fac			num(9)		descr "Número de Factura                 "
+								in factu (mof_suc, mof_tip, mof_stip),
+	mof_art			num(9)		descr "Código de Articulo                "
+								not null,
+	mof_ite			num(4)		descr "Número de Item                    "
+								default 0
+								not null,
+	mof_dev			num(1)		descr "Tipo de Devolución                "
+								not null /*ver forumcnf.sc - fdevol */
+								default 0,
+	mof_prec		num(9,4)	descr "Precio de Venta Unitario          "
+								default 0
+								not null,
+	mof_cost		num(9,4)	descr "Precio de compra facturado        "
+								default 0
+								not null,
+	mof_cant		num(9,3)	descr "Cantidad                          "
+								not null,
+	mof_udad		char(1)		descr "Unidad                            "
+								/* ver forumcnf.sc - fudad */
+								not null,
+	mof_iaba		num(9,4)	descr "Abasto por Unidad                 "
+								default 0
+								not null,
+	mof_iint		num(9,4)	descr "Impuesto Interno por Unidad       "
+								default 0
+								not null,
+	mof_ofe			bool		descr "Precio de Oferta ?                "
+								,
+	mof_dig			bool		descr "Precio Digitado ?                 "
+								,
+	mof_scan		num(9)		descr "Cantidad en unidades              "
+								default 0
+								not null,
+	mof_cpie		num(9)		descr "Cantidad de piezas                "
+								default 0
+								not null,
+	mof_mvt			num(2)		descr "Modo de Venta                     "
+						  		not null,
+	mof_iva1		num(11,3)	descr "Importe iva1 (se graba de caliva) "
+								default 0,
+	mof_iva2		num(11,3)	descr "Importe iva2(se graba de caliva)  "
+								default 0,
+	mof_iva3		num(11,3)	descr "Importe iva3(se graba de caliva)  "
+								default 0,
+	mof_iva4		num(11,3)	descr "Importe iva4(se graba de caliva)  "
+								default 0,
+	mof_tas1		num(5,3)	descr "Tasa 1 (se graba de caltas)       "
+								default 0,
+	mof_tas2		num(5,3)	descr "Tasa 2 (se graba de caltas)       "
+								default 0,
+	mof_tas3		num(5,3)	descr "Tasa 3 (se graba de caltas)       "
+								default 0,
+	mof_tas4 		num(5,3)	descr "Tasa 4 (se graba de caltas)       "
+								default 0,
+	mof_obs			char(2)		descr "Observaciones                     "
+								,
+	mof_pol			num(11,3)	descr "Iva del Pollo                     "
+								default 0,
+	mof_adu[4]		num(2)		descr "Código de Aduana                  "
+								,
+	mof_des[4]		num(7)		descr "Número de Despacho                "
+								,
+	mof_cad[4]		num(6,3)	descr "Cantidad por despacho             "
+								,
+	mof_ddebar		bool		descr "Cargado Desde el Sistema de Barra?"
+								default false,
+	mof_plista		num(9,4)	descr "Precio de Lista(Neto sin recargos)"
+								default 0,  
+	mof_accion		num(3)		descr "Número de Acción Promocional      "
+								,
+	mof_promo		num(3)		descr "Número de Promoción               "
+								,
+	mof_mstra		bool		descr "Marca de Transferido a Stock      "
+								default false,
+	mof_estvt		bool		descr "Modo Estadistico Ventas			 "
+								default false,
+	mof_estvc		bool		descr "Modo Estadistico Ventas-Cliente	 "
+								default false,
+	mof_estct		bool		descr "Modo Estadistico Compras			 "
+								default false,
+	mof_estcc		bool		descr "Modo Estadistico Compras-Comprador"
+								default false,
+	mof_fam			num(2)		descr "Familia                           "
+				  				,
+	mof_dep			num(2)		descr "Departamento                      "
+				  				,
+	mof_sec			num(2)		descr "Sección                           "
+					  			,
+	mof_gru			num(2)		descr "grupo                             "
+								,
+	mof_prep		num(9,4)	descr "Precio de compra facturado        "
+								default 0
+								not null,
+	mof_fec			date		descr "Fecha del Movimiento              "
+								,
+	mof_pcong		num(6)		descr "Código de Proveedor Consignado"
+								,
+	mof_ncscan		num(9)		descr "Cantidad NC en unidades           "  
+								default 0
+								not null,
+	mof_nccpie		num(9)		descr "Cantidad NC de piezas             "
+								default 0
+								not null,
+	mof_cbar		char(15)	descr "Código de Barras                  "
+								,
+	mof_kgsn		num(10,3)	descr "Kilos Netos                       "
+								default 0.0,
+	mof_catr		num(2)		descr "Categoria de Rentabilidad"
+								,
+	mof_pvtab		num(9,4)	descr "Precio de Venta(Bruto sin desc/Recar)"
+								default 0,  
+	mof_color		char(10)	descr "Color                             "
+								,
+	mof_tcol		char(1)		descr "Tipo de Color                     "
+								in("A":"Automotor","T":"Tintometrico")
+								,
+	mof_prov		num(6)		descr "Codigo de Proveedor Principal     "
+								,
+	mof_clie		num(6)		descr "Codigo de Cliente                 "
+								,
+}
+primary key (mof_suc, mof_tip, mof_stip, mof_fac, mof_ite, mof_art)[49],
+index fec (mof_suc, mof_fec)[19],
+index art (mof_suc, mof_art, mof_fec)[30];
+
+table reimp						descr "Facturas Reimpresas              "
+{
+	rei_suc			num(2)		descr "Código de Sucursal               "
+								default $codsuc,
+	rei_tip			char(2)		descr "Tipo de Comprobante              "
+								default "FC"
+								not null,
+	rei_stip		num(2)		descr "Subtipo de Comprobante           "
+								,
+	rei_nro			num(9)		descr "Número de Factura                "
+								not null,
+	rei_fec			date		descr "Fecha de la Factura              "
+								not null,
+	rei_itero		num(3)		descr "Número de Reimpresión            "
+								,
+	rei_clie		num(6)		descr "Número de Cliente                "
+								,
+	rei_ope			num(4)		descr "Código de Operador               "
+								,
+	rei_mot			char(30)	descr "Motivo de Reimpresión            "
+								,
+}
+primary key (rei_suc, rei_tip, rei_stip, rei_nro, rei_fec, rei_itero);
+
+table flete						descr "Facturas por Fletero              "
+{
+	fle_flet		num(6)		descr "Código de Fletero                 "
+				 				not null,
+	fle_fac			num(9)		descr "Nro de Factura                    "
+								not null,
+	fle_fec			date		descr "Fecha Factura                     "
+				  				not null,
+	fle_cli			num(6)		descr "Cliente                           "
+								,
+	fle_gra			num(11,2)	descr "Gravado                           "
+				 				default 0.0,
+	fle_flpo		num(5,2)	descr "Porcentaje                        "
+				  				default 0,
+	fle_ifle		num(10,2)	descr "Importe Flete                     "
+								,
+}
+primary key (fle_flet, fle_fac);
+
+table concre		  			descr "Tabla para control de NC          "
+{
+	ccr_suc	  		num(2)		descr "Código de Sucursal                "
+			  					,
+	ccr_tip			char(2)		descr "Tipo de Comprobante               "
+								default "FC",
+	ccr_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				,
+	ccr_nro			num(9)		descr "Número de Factura Interno         "
+								not null,
+	ccr_fec			date		descr "Fecha de la Factura               "
+								not null,
+	ccr_clie		num(6)		descr "Número de Cliente                 "
+								,
+	ccr_ccte		bool		descr "Cuenta corriente ?                "
+								default false,
+	ccr_cta	  		char(5)		descr "Cuenta en el caso de ser Cta.Cte. "
+								,
+	ccr_tot			num(11,2)	descr "Total de la Factura               "
+				 				,
+	ccr_inc			num(11,2)	descr "Total de Notas de Créditos        "
+			 					,
+	ccr_cpag		num(2)		descr "Condición de pago                 "
+				 				,
+	ccr_com			num(6)		descr "Vendedor o Comisionista           "
+			 					,
+	ccr_nroi		num(9)		descr "Número de Factura Impreso         "
+								,
+}
+primary key (ccr_suc, ccr_tip, ccr_stip, ccr_nro)[14];
+
+table motcre					descr "Motivos de Notas de Créditos      "
+{
+	mcr_cod	  		num(2)		descr "Código de Motivo                  "
+								not null,
+	mcr_des			char(30)	descr "Descripción                       "
+								,
+	mcr_coda  		num(2)		descr "Código de Accion                  "
+								,
+}
+primary key (mcr_cod);
+
+table cpagent					descr "Condiciones de Pago-Ent/Fam/Dep/Sec"
+{
+	cpe_con			num(2)		descr "Condición de pago                 "
+			  					not null,
+	cpe_enti  		num(6)		descr "Entidad                           "
+								not null,
+	cpe_fam			num(2)		descr "Familia                           "
+				  				,
+	cpe_dep			num(2)		descr "Departamento                      "
+				  				,
+	cpe_sec			num(2)		descr "Sección                           "
+					  			,
+	cpe_tpre[10]	num(2)		descr "Tipo de Precio                    "
+								,
+	cpe_porr[10]	num(5,2)	descr "Porcentaje de Recargo             "
+								,
+	cpe_fvto		date		descr "Fecha de Vencimiento              "
+					  			,
+	cpe_prov  		num(6)		descr "Proveedor                         "
+								,
+	cpe_maspro		bool		descr "Calcula otras promociones ?       "
+								default false
+								,
+	cpe_secu		num(4)		descr "Nro de Secuencia                  "
+								default 0
+								not null,
+	cpe_eart[20]	num(9)		descr "Articulos que se excluye          "
+								,
+}
+primary key (cpe_con, cpe_enti, cpe_fam, cpe_dep, cpe_sec)
+;
+
+table bloqueo					descr "Control de Bloqueos               "
+{
+	blo_cla	  		num(2)		descr "Clave                             "
+								,
+}
+primary key (blo_cla);
+
+table numimp					descr "Numerador para Impresión          "
+{
+	nim_emp		num(2)	 		descr "Empresa                           "
+						 		not null,
+	nim_tcom	char(2)	 		descr "Tipo de Comprobante               "
+						 		not null,
+	nim_ope		num(2)	 		descr "Código de Operación               "
+						 		not null,
+	nim_cnum	num(5)	 		descr "Código de Numeración              "
+						 		not null,
+}
+primary key ( nim_emp, nim_tcom, nim_ope );                    
+
+table facacob						descr "Facturas a Cobrar (Caja)"
+{
+	fcc_sec		char(3)				descr "Sector de Caja Interviniente"
+									,
+	fcc_suc		num(2)				descr "Sucursal que factura        "
+									default $codsuc,
+	fcc_tip		char(2)				descr "Tipo de Comprobante         "
+									,
+	fcc_stip	num(2)				descr "Subtipo de Comprobante      "
+									,
+	fcc_nro		num(9)				descr "Número de Comprobante       "
+									,
+	fcc_itot	num(10,2)			descr "Total del comprobante       "
+									default 0.0,
+	fcc_clie	num(6)				descr "Código de Cliente           "
+									,
+}
+primary key (fcc_sec, fcc_suc, fcc_tip, fcc_stip, fcc_nro);
+
+table zoncpos					descr "Códigos Postales por Zonas        "
+{
+	zoc_reg		char(2)			descr "Código de Región de Clientes      "
+								in regiones:(reg_desc),
+	zoc_zon		num(3)			descr "Código de Zona de Clientes        "
+								in zona(zoc_reg):(zon_desc),
+	zoc_dzon	char(30)		descr "Descripción de Zona               "
+								,
+	zoc_cpos	num(4)			descr "Código Postal Integrante          "
+								not null,
+}
+primary key (zoc_reg, zoc_zon, zoc_cpos),
+index cpos  (zoc_cpos, zoc_reg, zoc_zon);
+
+table lugent						descr "Lugares de Entrega por Cliente"
+{
+	lug_cli		num(6)				descr "Código de Cliente             "
+									in clientes:(cli_nom),
+	lug_suc		num(2)				descr "Sucursal de Entrega           "
+									not null,
+	lug_dir		char(50)			descr "Dirección                     "
+									,
+	lug_loc		char(30)			descr "Localidad                     "
+									,
+	lug_cpos	num(4)				descr "Código Postal                 "
+									,
+	lug_pcia	char(1)				descr "Provincia de Entrega          "
+									,
+	lug_reg		char(2)				descr "Región del Cliente            "
+									in regiones:(reg_desc),
+	lug_zon		num(3)				descr "Zona del Cliente              "
+									in zona(lug_reg):(zon_desc),
+	lug_entre	char(30)			descr "Entre Calles                  "
+									,
+	lug_pfil	char(4)				descr "Fila en Pagina Filcar         "
+									,
+	lug_cfil	char(4)				descr "Columna en Pagina Filcar      "
+									,
+	lug_dent[10]	char(15)		descr "Dia de Entrega                "
+									,
+	lug_hentd[10]	time			descr "Hora de Entrega Desde         "
+									,
+	lug_henth[10]	time			descr "Hora de Entrega Hasta         "
+									,
+	lug_pag			num(3)			descr "Página FILCAR                 "
+									//in cuadro(lug_reg,lug_zon)
+									,
+	lug_ven			num(6)			descr "Vendedor en lugar de entrega  "
+									,
+	lug_nceral		char(15)		descr "Nro.Cert. Hab.Beb.Alcoholicas "
+									,
+	lug_fvigd		date			descr "Fecha de Vigencia Desde       "
+									,
+	lug_fvigh		date			descr "Fecha de Vigencia Hasta       "
+									,
+	lug_nhabm		char(25)		descr "Nro.Cert.Habilitac.Municipal  "
+									,
+	lug_muni		num(2)			descr "Municipalidad donde Abasta    "
+									,
+	lug_ncpos		char(8)			descr "Nuevo Codigo Postal           "
+									,
+	lug_expr		num(6)			descr "Codigo de Expreso             "
+									,
+	lug_orden		num(6)			descr "Orden de Entrega              "
+									,
+	lug_barrio		char(30)		descr "Barrio                        "
+									,
+	lug_dvisi		char(15)		descr "Dia de Visita del Vendedor    "
+	                                ,
+}
+primary key(lug_cli, lug_suc),
+index zona(lug_reg, lug_zon, lug_cli, lug_suc),
+index vend(lug_ven, lug_cli, lug_suc),
+index orden(lug_pag, lug_orden),
+index xvisi(lug_ven, lug_dvisi, lug_cli, lug_suc);
+
+table rentart						descr "Resultados Acumulados por Articulo"
+{
+	rar_anio	num(4)				descr "Anio                             "
+									,
+	rar_mes		num(2)				descr "Mes                              "
+									,
+	rar_art		num(9)				descr "Código de Articulo               "
+									,
+	rar_vta		num(15,2)			descr "Total importe vendido            "
+									default 0.0
+									,
+	rar_prep	num(15,2)			descr "Total por precio reposicion      "
+									default 0.0
+									,
+	rar_pcos	num(15,2)			descr "Total por precio costo           "
+									default 0.0
+									,
+	rar_suc		num(2)				descr "Sucursal que acumula             "
+									,
+}
+primary key(rar_anio, rar_mes, rar_art, rar_suc)[3];
+
+table cfolder					descr "Folders Para Clientes (Cabecera)   "
+{
+	cfo_tpre		num(2)		descr "Tipo de Folder Especial            "
+								not null,
+	cfo_fdes		date		descr "Fecha de Vigencia Desde            "
+								,
+   	cfo_fhas		date		descr "Fecha de Vigencia Hasta            "
+								,
+	cfo_margen		num(5,2)	descr "Porcentaje Margen del Folder       "
+								default 0,
+}
+primary key ( cfo_tpre );
+
+table dfolder					descr "Folders Para Clientes (Detalle)    "
+{
+	dfo_tpre		num(2)		descr "Tipo de Folder Especial            "
+								not null,
+	dfo_clie		num(6)		descr "Código de Cliente                  "
+								not null,
+	dfo_fdes		date		descr "Fecha de Vigencia Desde            "
+								,
+   	dfo_fhas		date		descr "Fecha de Vigencia Hasta            "
+								,
+	dfo_margen		num(5,2)	descr "Porcentaje Margen del Folder       "
+								default 0,
+	dfo_hab			bool		descr "Habilitado?                        "
+								default true,
+}
+primary key ( dfo_tpre, dfo_clie ),
+index clie  ( dfo_clie, dfo_tpre );
+
+table cvtacli					descr "Condición de Venta por Cliente     "
+{
+	cvc_clie		num(6)		descr "Código de Cliente                  "
+								in clientes:(cli_nom)
+								not null,
+	cvc_cvta		num(2)		descr "Condición de Venta Usual           "
+								in con_pago:(cpa_des),
+	cvc_dcvta		char(30)	descr "Descripción Condición de Venta     "
+								,
+}
+primary key ( cvc_clie, cvc_cvta );
+
+table cliaux					descr "Cliente auxiliares                 "
+{
+	clx_suc			num(2)		descr "Codigo de Sucursal                 "
+								not null,
+	clx_clie		num(6)		descr "Código de Cliente                  "
+								in clientes:(cli_nom)
+								not null,
+	clx_fech		date		descr "Fecha Ultima Utilización           "
+								,
+	clx_hora		time		descr "Hora Ultima Actualización          "
+								,
+	clx_marca		bool		descr "Habilitado?                        "
+								default true,
+	clx_acum		num(11,2)	descr "Facturación Acumulada              "
+								default 0.0,
+}
+primary key ( clx_suc, clx_clie ),
+index marca ( clx_marca, clx_suc, clx_clie );
+
+table facturista				descr "Tratamiento de Facturista          "
+{
+	fao_func		char(1)		descr "Función Asignada                   "
+								default "F",
+	fao_ope			num(4)		descr "Código de Operador                 "
+								,
+	fao_maxnc		num(11,2)	descr "Monto Maximo Habilitado para NC    "
+								default 0.0
+								not null,
+	fao_varnc		bool		descr "Permite mas de una NC?             "
+								default false
+								not null,
+	fao_diasfc		num(3)		descr "Días Antiguedad de FC              "
+								default 30
+								not null,
+}
+primary key ( fao_func, fao_ope );
+
+table fciaux					descr "Auxiliar de fci                    "
+{
+	fci_cod			num(9)		descr "Código de Numeración               "
+								not null,
+	fci_fec			date		descr "Fecha de Actualización             "
+								not null,
+	fci_cop			bool		descr "Marca de Copia                     "
+								default false
+								not null
+								,
+	fci_suc			num(2)		descr "Código de Sucursal"
+								default 1
+								not null,
+}
+primary key (fci_suc, fci_cod);
+
+table parvta					descr "Parámetros de Ventas        "
+{
+	vta_ver	 		num(4)		descr "Versión Libro Iva           "
+				  				not null,
+	vta_mpre		bool		descr "Marca de Sólo Preferencial " 
+								not null default true
+								,
+	vta_suc[10]		num(2)		descr "Sucursal                    "
+								,
+	vta_enti[10]	num(6)		descr "Entidad Consumidor Final    "
+								,
+	vta_imes		num(14,2)	descr "Facturado del Mes           "
+								not null default 0
+				 				,
+	vta_cfmes		num(14,2)	descr "Facturado del Mes FC 11 "
+								not null default 0
+				 				,
+	vta_ncmes		num(14,2)	descr "Notas de Crédito del Mes NC 11 "
+								not null default 0
+				 				,
+	vta_pornc		num(5,2)	descr "Porcentaje de NC               "
+								not null
+								default 0,
+	vta_porin		num(5,2)	descr "Porcentaje de Incidencia       "
+								not null
+								default 0,
+	vta_porob		num(5,2)	descr "Porcentaje Objetivo            "
+								not null
+								default 0,
+	vta_cfin		num(14,2)	descr "Facturado del Mes FC 1 "
+								not null default 0
+				 				,
+	vta_porto		num(5,2)	descr "Porcentaje de Tolerancia FC 1 "
+								not null
+								default 0,
+	vta_compra		num(14,2)	descr "Total Compras "
+								not null default 0
+				 				,
+	vta_remito		num(14,2)	descr "Total Remitos "
+								not null default 0
+				 				,
+	vta_porce		num(5,2)	descr "Porcentaje entre Remito y Compra "
+								not null
+								default 0,
+}
+primary key (vta_ver);
+
+table clipre					descr "Clientes Preferenciales     "
+{
+	cli_cod	 		num(6)		descr "Código de Entidad           "
+				  				not null,
+}
+primary key (cli_cod);
+
+table auxfactu					descr "Tabla auxiliar de cabecera de facturas  "
+{
+	afac_suc		num(2)		descr "Código de Sucursal                "
+								default $codsuc,
+	afac_tip		char(2)		descr "Tipo de Comprobante               "
+				  				default "FC"
+								not null,
+	afac_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				default 01,
+	afac_nro		num(9)		descr "N\'{u}mero de Factura                 "
+								not null,
+	afac_clie		num(6)		descr "N\'{u}mero de Cliente                 "
+								,
+	afac_nom		char(45)	descr "Nombre o Razon social             "
+								,
+	afac_dir		char(40)	descr "Dirección                         "
+								,
+	afac_loc		char(30)	descr "Localidad                         "
+								,
+	afac_tel		char(20)	descr "Telefonos                         "
+								,
+	afac_ndoc		num(11)		descr "N\'{u}mero documento DGI.             "
+								,
+}
+primary key   (afac_suc, afac_tip, afac_stip, afac_nro);
+
+table cabrem 					descr "Tabla Cabecera de Remitos         "
+{
+	rem_suc			num(2)		descr "Código de Sucursal                "
+								default $codsuc,
+	rem_tip			char(2)		descr "Tipo de Comprobante               "
+				  				default "RT"
+								not null,
+	rem_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				default 01,
+	rem_nro			num(9)		descr "Número de Remito                  "
+								not null,
+	rem_fec			date		descr "Fecha del Remito                  "
+								not null,
+	rem_tipf 		char(2)		descr "Tipo de Comprobante Factura       "
+				  				default "FC"
+								,
+	rem_stipf		num(2)		descr "Subtipo de Comprobante Factura    "
+				  				,
+	rem_nrof		num(9)		descr "Número de Factura                 "
+								,
+	rem_clie		num(6)		descr "Número de Cliente                 "
+								,
+	rem_ven			num(6)		descr "Código de Vendedor                "
+				  				,
+	rem_lugent		num(2)		descr "Lugar de Entrega                  "
+								,
+	rem_usua		char(15)	descr "Usuario que dio el Alta           "
+								,	
+	rem_feca		date		descr "Fecha de Alta                     "
+								,
+	rem_hora		time		descr "Hora de Alta                      "
+								,
+	rem_roll		char(15)	descr "Código Unidad de Almacenamiento"
+								,
+	rem_est			char(1)		descr "Código Unidad de Almacenamiento"
+								in( "G":"Generado",
+									"C":"Consolidado",
+									"E":"Entregado",
+									"F":"Facturado")
+								,
+	rem_conso		num(9)		descr "Número Consolidado"
+								default 0
+								not null
+								,
+    rem_cbar		char(15)	descr "Código Barra Remito"
+								,
+	rem_fece		date		descr "Fecha de Entrega                  "
+								,
+	rem_hore		time		descr "Hora de Entrega                   "
+								,
+	rem_obs         char(80)    descr "Observacion                       "
+								,
+	rem_cancan      num(4)      descr "Cantidad de Canastos contenidos   "
+								,
+	rem_canbul      num(4)      descr "Cantidad de Bultos                "
+								,
+	rem_canite      num(4)      descr "Cantidad de Items del detalle     "
+								,
+	rem_canctr      num(9)      descr "Cantidad de control, Suma Cantidades del Detalle"
+								,
+}
+primary key(rem_suc, rem_tip, rem_stip, rem_nro),
+index fac (rem_tipf, rem_stipf, rem_nrof,rem_suc, rem_tip, rem_stip, rem_nro),
+index ualm(rem_roll, rem_est, rem_conso),
+index xconso(rem_suc, rem_conso, rem_clie ),
+index xcbar(rem_cbar);
+
+table detrem					descr "Detalle de Remitos                "
+{
+	red_suc			num(2)		descr "Código de Sucursal                "
+								not null,
+	red_tip			char(2)		descr "Tipo de Comprobante               "
+								not null,
+	red_stip		num(2)		descr "Subtipo de Comprobante            "
+								,
+	red_nro 		num(9)		descr "Número de Remito                 "
+								in cabrem (red_suc, red_tip, red_stip),
+	red_art			num(9)		descr "Código de Articulo                "
+								not null,
+	red_ite			num(4)		descr "Número de Item                    "
+								default 0
+								not null,
+	red_cant		num(7,3)	descr "Cantidad                          "
+								not null,
+	red_udad		char(1)		descr "Unidad                            "
+								/* ver forumcnf.sc - fudad */
+								not null,
+	red_scan		num(9)		descr "Cantidad en unidades              "
+								default 0
+								not null,
+	red_nrot 		num(9)		descr "Número de Rotulo                  "
+								,
+	red_iter		num(4)		descr "Número de Item Rotulo             "
+								default 0
+								not null,
+	red_est			char(1)		descr "Código Unidad de Almacenamiento"
+								in( "G":"Generado",
+									"C":"Consolidado",
+									"E":"Entregado",
+									"F":"Facturado")
+								,
+}
+primary key(red_suc, red_tip, red_stip, red_nro, red_art, red_ite),
+index xrotu(red_suc, red_nrot, red_iter),
+index xesta( red_suc, red_art, red_est ),
+index estad( red_suc, red_est, red_art );
+
+table clicita		  			descr "Tabla Cabecera de licitación      "
+{
+	clic_suc  		num(2)		descr "Código de Sucursal                "
+			  					,
+	clic_tip		char(2)		descr "Tipo de Comprobante               "
+								default "FC",
+	clic_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				,
+	clic_nro		num(9)		descr "Número de Factura Interno         "
+								not null,
+	clic_desc[3]	char(50)	descr "Descripción Adicional en cabecera "
+								,
+	clic_desp[3]	char(50)	descr "Descripción Adicional al Pie      "
+								,
+}
+primary key (clic_suc, clic_tip, clic_stip, clic_nro);
+
+table dlicita		  			descr "Tabla Detalle de licitación       "
+{
+	dlic_suc  		num(2)		descr "Código de Sucursal                "
+			  					,
+	dlic_tip		char(2)		descr "Tipo de Comprobante               "
+								default "FC",
+	dlic_stip		num(2)		descr "Subtipo de Comprobante            "
+				  				,
+	dlic_nro		num(9)		descr "Número de Factura Interno         "
+								not null,
+	dlic_ite		num(4)		descr "Número de Item                    "
+								,
+	dlic_art		num(9)		descr "Código de Articulo                "
+								,
+	dlic_prec		num(8,4)	descr "Precio facturado                  "
+								default 0
+								not null,
+	dlic_cant		num(9,3)	descr "Cantidad                          "
+								not null,
+	dlic_des[4]		char(50)	descr "Descripción Adicional             "
+								,
+}
+primary key (dlic_suc, dlic_tip, dlic_stip, dlic_nro, dlic_ite, dlic_art);
+
+
+/// INTERFAS CON PROMOS
+
+create schema forumpr1 			descr "Promociones del Sup. Mayorista"
+								language "C";
+
+// Acciones promocionales.
+
+table accionpro					descr "Acción promocional            "
+{
+	acp_accion		num(3)		descr "Número de acción promocional  "
+								not null
+								>0,
+	acp_daccion		char(30)	descr "Descripción                   "
+								,
+	acp_fdesde		date		descr "Fecha vigencia desde          "
+								not null,
+	acp_fhasta		date		descr "Fecha vigencia hasta          "
+								not null,
+	acp_usua		char(15)	descr "Usuario                       "
+								,
+	acp_fing		date		descr "Fecha de Ingreso              "
+								,
+	acp_hing		time		descr "Hora de Ingreso               "
+								,
+}
+primary key ( acp_accion );
+
+// Promociones
+
+table cpromo					descr "Promoción                     "
+{
+	cpr_accion		num(3)		descr "Acción promocional            "
+								in accionpro:(acp_daccion)
+								not null,
+	cpr_promo		num(4)		descr "Promoción                     "
+								not null
+								>0,
+	cpr_tpromo		num(2)		descr "Mecanismo de cálculo          "
+								in (1:"Lleva/Paga            ",
+									2:"Regalo                ",
+									3:"LLeva Surtido/Paga    ",
+									4:"Lleva/Descuento       ",
+									5:"Acción Global Descuento",
+									8:"Descuento Escalonado")
+								not null,
+	cpr_dpromo[3]	char(30)	descr "Descripción                   "
+								,
+	cpr_cospro		bool		descr "Costo a cargo del proveedor?  "
+								default true
+								not null,							
+	cpr_top			bool		descr "Es promoción Super Top?       "
+								default false
+								not null,															
+	cpr_mvta		num(1)		descr "Modo de Venta Habilitada      "
+								,
+	cpr_fanta		bool		descr "Visible?                      "
+								default true,
+	cpr_usua		char(15)	descr "Usuario                       "
+								,
+	cpr_fuact		date		descr "Fecha Ultima Actualizacion    "
+								,
+	cpr_huact		time		descr "Hora Ultima Actualizacion     "
+								,
+	cpr_tpre		num(2)		descr "Tipo de Precio Asociado       "
+								,
+	cpr_selobs		bool		descr "Selecciona Obsequios?         "
+								default false,
+	cpr_ibase		num(11,2)	descr "Importe Base de la Acción     "
+								default 0.0,
+	cpr_tenti[30]	char(1)		descr "Tipo de Entidad               "
+								,
+	cpr_enti[30]	num(6)		descr "Código de Entidad             "
+								,
+	cpr_tipcli[10]	num(2)		descr "Tipos de clientes             "
+								,
+}
+primary key ( cpr_accion , cpr_promo );
+
+// Control de cupos por sucursal
+
+table cpromocup					descr "Control de cupos por sucursal "
+{
+	kpr_accion		num(3)		descr "Acción promocional            "
+								in accionpro:acp_daccion
+								not null,
+	kpr_promo		num(4)		descr "Promoción                     "
+								not null
+								>0,
+	kpr_suc			num(2)		descr "Sucursal                      "
+								not null,
+	kpr_cupo		num(9)		descr "Cupo asignado                 "
+								>=0
+								not null,
+}
+primary key ( kpr_accion , kpr_promo , kpr_suc );
+
+// Control operativo por sucursal
+									
+table cpromosuc					descr "Control operativo p/sucursal  "
+{
+	spr_accion		num(3)		descr "Acción promocional            "
+								in accionpro:acp_daccion
+								not null,
+	spr_promo		num(4)		descr "Promoción                     "
+								not null
+								>0,
+	spr_suc			num(2)		descr "Sucursal                      "
+								not null,
+	spr_hab			bool		descr "Habilitación p/ventas         "
+								default true
+								not null,
+	spr_cven		num(9)		descr "Cantidad vendida              "
+								default 0
+								not null,
+}
+primary key (  spr_accion , spr_promo , spr_suc );
+
+// Condiciones
+
+table dpromo					descr "Condición a verificar         "
+{
+	dpr_accion		num(3)		descr "Acción promocional            "
+								in accionpro:acp_daccion
+								not null,
+	dpr_promo		num(4)		descr "Promoción                     "
+								not null
+								>=0,
+	dpr_item		num(4)		descr "Item                          "
+								not null
+								>=0,
+	dpr_art			num(9)		descr "Artículo                      "
+								not null,
+	dpr_lleva		num(5)		descr "Cantidad que lleva unid/gramos"
+								,
+	dpr_paga		num(5)		descr "Cantidad que paga unid/gramos "
+								,
+	dpr_yo			char(3)		descr "y/o                           "
+								in ("y":"Condicionar Artículos",
+									"o":"Suma de Artículos",
+									"fin":"Ultimo Artículo"),
+	dpr_des			num(5,2)	descr "Porcentaje de Descuento       "
+								default 0
+								,
+}
+primary key ( dpr_accion , dpr_promo , dpr_item, dpr_art ),
+index arti  ( dpr_art, dpr_accion, dpr_promo ),
+index arti1 ( dpr_accion , dpr_promo , dpr_art ),
+index arti2 ( dpr_accion, dpr_promo, dpr_art, dpr_item );
+
+// Articulo Regalado
+
+table rpromo					descr "Artículo regalado            "
+{
+	rpr_accion		num(3)		descr "Acción promocional            "
+								in accionpro:acp_daccion
+								not null,
+	rpr_promo		num(4)		descr "Promoción                     "
+								not null
+								>0,
+	rpr_art			num(9)		descr "Artículo                      "
+								not null,
+	rpr_regalo		num(5)		descr "Cantidad que se regala        "
+								,
+	rpr_sabor		bool		descr "Abre por Sabores?             "
+								default false,
+}
+primary key ( rpr_accion , rpr_promo , rpr_art ),
+index arti  ( rpr_art, rpr_accion, rpr_promo );
+
+table novfpr1				descr "Novedades de Promociones      "
+{
+	nop_acc		num(3)		descr "Acción Promocional         "
+							not null,
+	nop_pro		num(4)		descr "Promoción                  "
+							not null,
+	nop_nov		num(5)		descr "Número de Novedad          "
+							default 0,
+	nop_usu		char(15)	descr "Usuario que efectuó novedad"
+							,
+	nop_fnov	date		descr "Fecha de Novedad           "
+							default today,
+	nop_hnov	time		descr "Hora de Novedad            "
+							default hour
+							,
+	nop_tecla	char(2)	    descr "Tecla de Función           "
+							,
+   	nop_npid	num(9)		descr "Número de P.I.D.           "   
+							,
+	nop_obs		char(50)	descr "Motivo de la Novedad       "
+							,
+}
+primary key (nop_acc, nop_pro, nop_nov),
+index pornov(nop_fnov,nop_hnov, nop_acc, nop_pro);
+
+table superof				descr "Promoción Super Ofertas    "
+{
+	sof_ver		num(4)		descr "Versión                    "
+							not null,
+	sof_art		num(9)		descr "Artículo Promocionado      "
+							not null,
+ 	sof_cbul	num(6)		descr "Cantidad Bultos p/Cupo     "
+							not null,
+	sof_udad	char(1)	    descr "Tipo de Unidad"
+							not null
+							default "b",
+	sof_fdesde	 date		descr "Fecha vigencia desde       "
+				 			not null,
+	sof_fhasta	 date		descr "Fecha vigencia hasta       "
+					  		not null,
+	sof_base	num(10,2)	descr "Base de Cálculo            "
+							default 0.0,
+	sof_suc[10] num(2)		descr "Sucursales Habilitadas     "
+							,
+	sof_modo	char(1)		descr "Modo de Cálculo            "
+							default "A"
+							in ("A":"Automático","M":"Manual")
+							not null
+}
+primary key ( sof_ver, sof_art ),
+index art ( sof_art, sof_ver );
+
+table ofcuplim				descr "Ofertas Con Cupos Limitados"
+{
+	ofc_ver		num(4)		descr "Versión                    "
+							default 0
+							not null,
+	ofc_art		num(9)		descr "Artículo Promocionado      "
+							not null,
+	ofc_udad	char(1)		descr "Tipo de Unidad             "
+							not null
+							default "u",
+	ofc_cup		num(8,3)	descr "Cantidad de Cupo Limite    "
+							not null,
+	ofc_cant	num(8,3)	descr "Cantidad cubierta s/cupo   "
+							,
+	ofc_fdesde	date		descr "Fecha vigencia desde       "
+							not null,
+	ofc_fhasta	date		descr "Fecha vigencia hasta       "
+							not null,
+	ofc_tippre	num(2)		descr "Tipo de Precio             "
+							default 0,
+	ofc_suc[10] num(2)		descr "Sucursales Habilitadas     "
+							,
+	ofc_cpra	num(8,3)	descr "Cantidad a Comprar         "
+							,
+	ofc_ven[20] num(6)		descr "Vendedores Habilitados     "
+							,
+	ofc_cli[20] num(6)		descr "Vendedores Habilitados     "
+							,
+}
+primary key ( ofc_ver, ofc_art );
+
+// Promociones de Acciones Globales
+
+table acciongl					descr "Acción promocional TyT        "
+{
+	act_vers		num(3)		descr "Número de Versión             "
+								not null,
+	act_accion		num(3)		descr "Número de Acción promocional  "
+								not null,
+	act_daccion		char(30)	descr "Descripción                   "
+								,
+	act_fdesde		date		descr "Fecha vigencia desde          "
+								not null,
+	act_fhasta		date		descr "Fecha vigencia hasta          "
+								not null,
+	act_ibase		num(11,2)	descr "Importe Base de la Acción     "
+								default 0.0,
+	act_tenti[30]	char(1)		descr "Tipo de Entidad               "
+								,
+	act_enti[30]	num(6)		descr "Código de Entidad             "
+								,
+	act_suc[20]		num(2)		descr "Sucursal Habilitada           "
+								,
+	act_usua		char(15)	descr "Usuario                       "
+								,
+	act_fing		date		descr "Fecha de Ingreso              "
+								,
+	act_hing		time		descr "Hora de Ingreso               "
+								,
+}
+primary key ( act_vers, act_accion ),
+index  poraccion( act_accion, act_vers);
+
+// Promociones TyT
+
+table promogl					descr "Promoción Global de Descuento "
+{
+	prm_vers		num(3)		descr "Número de Versión             "
+								default 0
+								not null,
+	prm_accion		num(3)		descr "Acción promocional            "
+								in acciongl(prm_vers):act_daccion
+								not null,
+	prm_item		num(4)		descr "Item                          "
+								not null,
+	prm_fam			num(2)		descr "Familia                       "
+								,
+	prm_dep			num(2)		descr "Departamento                  "
+								,
+	prm_sec			num(2)		descr "Seccion                       "
+								,
+	prm_gru			num(2)		descr "Grupo                         "
+								,
+	prm_sart		char(1)		descr "Selección de Artículos        "
+								not null
+								default "T",
+	prm_art[50]		num(9)		descr "Artículos Promocionados       "
+								,
+	prm_pora[50]	num(5,2)	descr "Porcentaje Descuento p/Artic. "
+								,
+	prm_ccpra[50]	num(9)		descr "Cantidad a Comprar            "
+								,
+	prm_tprom		char(1)		descr "Tipo de Promocion             "
+								,
+	prm_porc		num(5,2)	descr "Porcentaje                    "
+								,
+	prm_usua		char(15)	descr "Usuario                       "
+								,
+	prm_fing		date		descr "Fecha de Ingreso              "
+								,
+	prm_hing		time		descr "Hora de Ingreso               "
+								,
+	prm_prov		num(6)		descr "Proveedor                     "
+								,
+	prm_promo		num(4)		descr "Promoción                     "
+								>0
+								not null
+								,
+}
+primary key ( prm_vers, prm_accion, prm_item ),
+index porfam( prm_vers, prm_accion, prm_fam, prm_dep, prm_sec, prm_gru),
+index porversion( prm_accion, prm_vers);
+
+table	acciglo				descr "Acciones Globales Descuentos"
+{
+	acg_suc		num(2)    	descr "Código de Sucursal        " 
+							not null,
+	acg_tip		char(2)   	descr "Tipo                      "
+							not null,
+	acg_stip	num(2)    	descr "Subtipo                   "
+							not null,
+	acg_nro		num(9)    	descr "Número de Factura         " 
+							not null,
+	acg_fec		date      	descr "Fecha de la Factura       " 
+							not null,
+	acg_clipro	num(6)		descr "Cliente                   "
+							not null,                         
+	acg_vers	num(3)		descr "Número de Versión         "
+							default 0
+							not null,
+	acg_accion	num(3)		descr "Acción promocional        "
+							in acciongl(acg_vers):act_daccion
+							not null,
+	acg_itota	num(11,2)	descr "Importe de la Accion      "
+							default 0.0,
+	acg_promo	num(4)		descr "Promoción                 "
+							not null,
+}
+primary key ( acg_suc , acg_tip , acg_stip , acg_nro );
+
+table dpromogl				descr "Detalle Promoción Global Obsequios"
+{
+	drm_vers		num(3)		descr "Número de Versión             "
+								default 0
+								not null,
+	drm_accion		num(3)		descr "Acción promocional            "
+								in acciongl(drm_vers):act_daccion
+								not null,
+	drm_item		num(4)		descr "Item de Detalle de Promos     "
+								not null,
+	drm_art			num(9)		descr "Articulo Promocionado         "
+								not null,
+	drm_prio		num(2)		descr "Nivel de Prioridad de Entrega "
+								not null
+								default 1,
+	drm_hab			bool		descr "Habilitado?                   "
+								default true,
+	drm_mpro		bool		descr "Marca de Proceso              "
+								default false,
+	drm_cant		num(5)		descr "Cantidad Tope para Obsequio   "
+								default 1,
+	drm_promo		num(4)		descr "Promoción                     "
+								>0
+								not null
+								,
+}
+primary key ( drm_vers, drm_accion, drm_item, drm_art ),
+index priori( drm_prio, drm_art );
+
+table dpriocgl					descr "Detalle Prioridad del Cliente     "
+{
+	dpc_vers		num(3)		descr "Número de Versión             "
+								default 0
+								not null,
+	dpc_accion		num(3)		descr "Acción promocional            "
+								in acciongl(dpc_vers):act_daccion
+								not null,
+	dpc_clie		num(6)		descr "Cliente                       "
+								,
+	dpc_prio		num(2)		descr "Nivel de Prioridad Accion     "
+								,
+	dpc_art			num(9)		descr "Artículo Promocionado         "
+								,
+	dpc_promo		num(4)		descr "Promoción                     "
+								>0
+								not null
+								,
+}
+primary key (dpc_vers, dpc_accion, dpc_clie, dpc_prio);
+
+table cliaccgl					descr "Clientes Habilitados p/Acción "
+{
+	cag_vers		num(3)		descr "Número de Versión             "
+								not null,
+	cag_accion		num(3)		descr "Número de Acción promocional  "
+								not null,
+	cag_ite			num(4)		descr "Código de Item del Vector     "
+								not null,
+	cag_clie		num(6)		descr "Código de Cliente Habilitado  "
+								not null,
+	cag_mhab		bool		descr "Marca de Habilitación         "
+								default true,
+	cag_promo		num(4)		descr "Promoción                     "
+								>0
+								not null
+								,
+}
+primary key ( cag_vers, cag_accion, cag_ite, cag_clie );
+
+table movcupli				descr "Movimientos de Cupos Limitados"
+{
+	mcl_ver		num(4)		descr "Versión                       "
+							in(0:"Activo",1:"Historico")
+							not null
+							default 0
+							,
+	mcl_art		num(9)		descr "Artículo Promocionado         "
+							not null,
+	mcl_fing	date		descr "Fecha Ingreso movimiento      "
+							not null,
+	mcl_hing	time		descr "Hora Ingreso movimiento       "
+							not null,
+	mcl_ope		char(1)		descr "Codigo de Operacion           "
+							not null
+							in( "A":"Alta",
+								"B":"Baja",
+								"M":"Modificacion",
+								"V":"Venta(FC/NC/PE)",
+								"C":"Pone a Cero"),
+	mcl_fdesde	date		descr "Fecha vigencia desde          "
+							,
+	mcl_fhasta	date		descr "Fecha vigencia hasta          "
+							,
+	mcl_udad	char(1)		descr "Tipo de Unidad                "
+							,
+	mcl_cant	num(8,3)	descr "Cantidad de Movimento         "
+							,
+	mcl_tippre	num(2)		descr "Tipo de Precio                "
+							default 0,
+	mcl_suc		num(2)		descr "Sucursales                    "
+							,
+	mcl_tip		char(2)		descr "Tipo Comprobante afectado     "
+							,
+	mcl_stip	num(2)		descr "Operacion Comprob afectado    "
+							,
+	mcl_nro		num(9)		descr "Nunero Comprobante afectado   "
+							,
+	mcl_uxb		num(4)		descr "Unidad x Bulto                "
+							,
+	mcl_cupo	num(8,3)	descr "Cupo Asignado                 "
+							,
+	mcl_cpra	num(8,3)	descr "Cantidad a comprar p/otorgar  "
+							,
+	mcl_usua	char(15)	descr "Usuario que ingresa Movimiento"
+							,
+	mcl_ven		num(6)		descr "Vendedor afectado             "
+							,
+	mcl_cli		num(6)		descr "Cliente afectado              "
+							,
+}
+primary key ( mcl_ver, mcl_art, mcl_fing, mcl_hing),
+index porcom( mcl_suc, mcl_tip, mcl_stip, mcl_nro, mcl_fing, mcl_hing),
+index porven( mcl_suc, mcl_art, mcl_ven , mcl_fing, mcl_hing),
+index porcli( mcl_suc, mcl_art, mcl_cli , mcl_fing, mcl_hing),
+index porope( mcl_suc, mcl_art, mcl_ope , mcl_fing, mcl_hing);
+
+
+table resuacc				descr "Asignacion Promocion Otorgada"
+{
+	rcg_suc		num(2)    	descr "Código de Sucursal        " 
+							not null,
+	rcg_tip		char(2)   	descr "Tipo                      "
+							not null,
+	rcg_stip	num(2)    	descr "Subtipo                   "
+							not null,
+	rcg_nro		num(9)    	descr "Número de Factura         " 
+							not null,
+	rcg_orden	num(4)		descr "Orden de Otorgamiento     "
+							default 0
+							not null,
+	rcg_accion	num(3)		descr "Acción promocional        "
+							in accionpro:(acp_daccion)
+							not null,
+	rcg_promo	num(4)		descr "Promoción                 "
+							not null,
+	rcg_tpromo	num(2)		descr "Tipo de Promoción         "
+							not null,
+	rcg_art		num(9)		descr "Articulo de Promoción     "
+							,
+	rcg_cant	num(9)		descr "Cantidad de Articulo Promo"
+							,
+	rcg_prevta	num(8,4)	descr "Precio de Venta           "
+							,
+	rcg_precos	num(8,4)	descr "Precio de Costo           "
+							,
+	rcg_descu	num(5,2)	descr "Descuento                 "
+							,
+	rcg_valprom	num(9,2)	descr "Valor de Promocion        "
+							,
+	rcg_modcal	char(2)		descr "Modo de Calculo           "
+							,
+	rcg_ncant	num(9)		descr "Cantidad Articulo Promo NC"
+							,
+	rcg_nitem	num(4)		descr "Numero de Item de Promo   "
+							default 0
+							not null,
+}
+primary key ( rcg_suc , rcg_tip , rcg_stip , rcg_nro, rcg_orden ),
+index  xitem(rcg_suc , rcg_tip , rcg_stip , rcg_nro, rcg_nitem  );
+
+table pcombo				descr "Promocion de Combos        "
+{
+	pco_art		num(9)		descr "Articulo Promocionado      "
+							not null
+							,
+	pco_suc		num(2)		descr "Sucursales Habilitadas     "
+							not null
+							,
+	pco_fvig	date		descr "Fecha vigencia             "
+				 			not null
+				 			,
+	pco_bon		num(10,2)	descr "Porcentaje Bonificacion    "
+							default 0.0
+							,
+	pco_modo	char(1)		descr "Modo de Calculo            "
+							default "A"
+							in("A":"Automatico","M":"Manual")
+							not null
+							,
+}
+primary key ( pco_art, pco_suc, pco_fvig ),
+index suc (pco_suc,pco_art,pco_fvig);
+
+table	condacc				descr "Condicion de Promocion Otorgada"
+{
+	ccg_suc		num(2)    	descr "Código de Sucursal        " 
+							not null,
+	ccg_tip		char(2)   	descr "Tipo                      "
+							not null,
+	ccg_stip	num(2)    	descr "Subtipo                   "
+							not null,
+	ccg_nro		num(9)    	descr "Número de Factura         " 
+							not null,
+	ccg_accion	num(3)		descr "Acción promocional        "
+							in accionpro:(acp_daccion)
+							not null,
+	ccg_promo	num(4)		descr "Promoción                 "
+							not null,
+	ccg_tpromo	num(2)		descr "Tipo de Promoción         "
+							not null,
+	ccg_art		num(9)		descr "Articulo de Promoción     "
+							,
+	ccg_cant	num(9)		descr "Cantidad de Articulo Promo"
+							,
+	ccg_prevta	num(8,4)	descr "Precio de Venta           "
+							,
+	ccg_precos	num(8,4)	descr "Precio de Costo           "
+							,
+	ccg_valprom	num(9,2)	descr "Valor de Promocion        "
+							,
+	ccg_orden	num(4)		descr "Orden de Otorgamiento     "
+							default 0
+							not null,
+}
+primary key ( ccg_suc , ccg_tip , ccg_stip , ccg_nro, ccg_orden, ccg_art ),
+index xarti( ccg_suc , ccg_tip , ccg_stip , ccg_nro, ccg_art, ccg_accion, ccg_promo );
+
+// Control de cupos por Vendedor
+
+table cuppxven					descr "Control de cupos por Vendedor "
+{
+	cpv_accion		num(3)		descr "Acción promocional            "
+								in accionpro:acp_daccion
+								not null,
+	cpv_promo		num(4)		descr "Promoción                     "
+								not null
+								>0,
+	cpv_ven			num(6)		descr "Vendedor                      "
+								not null,
+	cpv_cupo		num(7)		descr "Cupo asignado                 "
+								>=0
+								not null,
+	cpv_cprom		num(7)		descr "Cantidad Promos Otorgadas     "
+								default 0,
+}
+primary key ( cpv_accion , cpv_promo , cpv_ven );
+
+
+////TEMAS DE COMPRAS
+
+create schema forumcpr descr "Sub-Esquema de Compras de FORUM"
+                    language "C";
+
+table proveed					descr "Maestro de Proveedores            "
+{
+	pro_cod			num(6)		descr "Código de Proveedor               "
+								not null,
+	pro_fuv[2]		date		descr "Fecha Ultima Visita               "
+								,
+/* datos del vendedor */
+	pro_ven[10]		char(30)	descr "Nombre del Vendedor               "
+								,
+	pro_vtel[10]	char(40)	descr "Teléfono del Vendedor             "
+								,
+	pro_car[10]		char(15)	descr "Cargo                             "
+								,
+	pro_ate[3]		char(2)		descr "Días de Atención                  "
+								in ("LU":"Lunes",
+									"MA":"Martes",
+									"MI":"Miercoles",
+									"JU":"Jueves",
+									"VI":"Viernes",
+									"SA":"Sabado"),
+/* Condiciones */
+	pro_pla[4]		num(3)		descr "Plazos                            "
+								,
+	pro_des[4]		num(5,2)	descr "Porcentaje Recargo/Bonificación   "
+								,
+	pro_des2[4]		num(5,2)	descr "Porcentaje Recargo/Bonificación   "
+								,
+	pro_des3[4]		num(5,2)	descr "Porcentaje Recargo/Bonificación   "
+								,
+/* datos del proveedor sobre nosotros */
+	pro_ncli		num(15)		descr "Número de Cliente para Proveedor  "
+								,
+	pro_zona		char(10)	descr "Zona de Cliente para el proveedor "
+								,
+	/* Control de compras */
+	pro_dstk		num(4)		descr "Días de Stock Objetivo            "
+								default 20,
+	pro_condc[8]	num(2)		descr "Condiciones de Compra             "
+								,
+	pro_datr		num(4)		descr "Días de Atraso en la Entrega      "
+								default 0,
+	pro_exed		bool		descr "Permite Exedente en Entrega?      "
+								default false,
+	pro_pexed		num(5,2)	descr "Porcentaje de Exedente en Entrega "
+								default 0,
+	pro_aedev		bool		descr "Emisión Datos de Devolución?      "
+								default true,
+	pro_aeven 		bool		descr "Emisión Prod.Vencidos o a Vencer? "
+								default true,
+	pro_prob		bool		descr "Proveedor con Problemas?          "
+								default false,
+	pro_vfcum[10]	date		descr "Fecha de Cumpleaños               "
+								,
+	pro_vmail[10]	char(70)	descr "Dirección de E-Mail               "
+								,
+	pro_diar[4]		num(3)		descr "Días Reales                       "
+								,
+	pro_tdev		num(2)		descr "Tipo de Devolucion                "
+								in tdevol:(tde_dtdev, tde_conc, tde_estd)
+								default 1,
+	pro_obsc[5]		char(40)	descr "Observaciones p/Compras           "
+								,
+   	pro_obsp[5]		char(40)	descr "Observaciones p/Pagos             "
+								,
+	pro_obsd[5]		char(40)	descr "Observaciones p/Depositos         "
+								,
+	pro_ddet		num(4)		descr "Días Para Calculo de Delta T      "
+								default 60
+								,
+	pro_emp			num(2)		descr "Empresa por la que opera          "
+								default 1,
+	pro_comp		num(6)		descr "Código de Comprador               "
+								,
+	pro_coi[8]		num(2)		descr "Código de C.O.I. Habitual         "
+								,
+	pro_pcoi[8]		num(5,3)	descr "Porcentaje p/C.O.I.               "
+								default 0,
+	pro_diac		num(4)		descr "Dias para Calculo de Fechas Competidores"
+								default 0,
+	pro_xlis        char(30)    descr "Descripcion de la Lista de Reposicion"
+								,
+	pro_dsug		num(4)		descr "Días sugeridos calculados         "
+								,
+	pro_mva			num(2)		descr "Ubicacion(deposito), que abastece "
+								,
+	pro_tent		char(1)		descr "Tipo de Entrega                   "
+								in( "F":"Fija", 
+									"P":"Pide Turno",
+									"S":"Sin Aviso")
+								not null
+								default "P"
+								,
+	pro_dent		char(2)		descr "Días de Entrega                   "
+								in ("LU":"Lunes",
+									"MA":"Martes",
+									"MI":"Miercoles",
+									"JU":"Jueves",
+									"VI":"Viernes",
+									"SA":"Sabado")
+								,
+	pro_hent		time		descr "Hora de Entrega                   "
+								,
+	pro_cate		char(2)		descr "Categoria de Proveedor            "
+								,
+	pro_diacie		num(1)		descr "Dia de Cierre Semanal"
+								, //forumcnf.diasem
+	pro_tage		num(2)		descr "Tipo de Agente                    "
+								,
+	pro_gln			char(13)	descr "Codigo GLN del proveedor          "
+								,
+	pro_tbonf[3]	num(4)		descr "Tipo de bonificacion Financiera   "
+								,
+	pro_tbonc[6]	num(4)		descr "Tipo de bonificacion Comerciales  "
+								,
+	pro_recbon		num(5,2)	descr "Porcentaje Recargo/Bonificación Precio "
+								,
+	pro_dvencoc		num(4)		descr "Nro de Dias para el Vencimiento de Orden Compra"
+}
+primary key (pro_cod),
+index por_comp(pro_comp, pro_cod),
+index por_cate(pro_cate, pro_cod);
+
+table pedidos					descr "Cabecera de Pedidos               "
+{
+	ped_nro			num(9)		descr "Número de Pedido                  "
+								,
+	ped_fec			date		descr "Fecha del Pedido                  "
+								not null,
+	ped_fen			date		descr "Fecha de Entrega                  "
+								not null,
+	ped_pro			num(6)		descr "Número de Proveedor               "
+								not null,
+	ped_cop[4]		num(3)		descr "Cantidad de días para pagar       "
+								,
+	ped_po1[4]		num(5,2)	descr "Porcentajes                       "
+								,
+	ped_po2[4]		num(5,2)	descr "Porcentajes                       "
+								,
+	ped_pag[4]		date		descr "Fecha de Pago                     "
+								,
+	ped_diat[4]		num(3)		descr "Cantidad de días reales           "
+								,
+	ped_comp		num(3)		descr "Código de Comprador               "
+				 				,
+	ped_sec			char(4)		descr "Sector Operativo                  "
+								default $SECTOR,
+	ped_obs			char(60)	descr "Observaciones                     "
+								,
+	ped_coi			num(2)		descr "Código Interno                    "
+//								in (00,99,19,91,28,82,37,73,46,64,55)
+								in codcoi:(coi_des, coi_porc1, coi_porc2)
+								not null
+								default 00,
+	ped_vend		char(20)	descr "Vendedor                          "
+								,
+	ped_tve			char(20)	descr "Teléfono del Vendedor             "
+								,
+	ped_imp			bool		descr "Impreso?                          "
+								default false,
+	ped_pnvo		bool		descr "Precio Nuevo?                     "
+								default false,
+	ped_cons		bool		descr "Consignación?                     "
+								default false,
+	ped_aut			bool		descr "Automático?                       "
+								default false,
+	ped_dia			num(2)		descr "Cantidad de Días                  "
+								,
+	ped_reci		bool		descr "Recibido?                         "
+								default false,
+	ped_po3[4]		num(5,2)	descr "Porcentajes                       "
+								,
+	ped_par			bool		descr "Se emitieron partes de recepción? "
+								default false,
+	ped_uso			bool		descr "Esta en uso?"
+								default false,
+	ped_pan			bool		descr "Es pago anticipado?               "
+								default false,
+	ped_tpro		num(1)		descr "Marca Tipo de Proceso             "
+								/* ver forumcnf.sc - ftpro */
+								default 0,
+	ped_condc		num(2)		descr "Codigo de Condicion de Compra     "
+								in condcomp:cco_des	
+								,
+	ped_usua		char(10)	descr "Usuario de Ingreso                "
+								,
+   	ped_fing		date		descr "Fecha de Ingreso                  "
+   								,
+	ped_hing		time		descr "Hora de Ingreso                   "
+								,
+	ped_est			char(1)		descr "Estado del Pedido                 "
+								default "P",
+	ped_usum		char(10)	descr "Usuario de Modificación           "
+								,
+   	ped_fmod		date		descr "Fecha de Modificación             "
+   								,
+	ped_hmod		time		descr "Hora de Modificación              "
+								,
+	ped_pcoi		num(5,3)	default 0
+								,
+	ped_emp			num(2)		descr "Empresa compradora               "
+								,
+	ped_ten			char(1)	    descr "Tipo de Entrega                   "		
+								in ("U":"Unica", "M":"Muchas")
+								not null
+								default "U"
+								,
+	ped_dias[12]	num(2)		descr "Dias Base para Entrega            "		
+								,
+   	ped_lista		num(6)		descr "Lista Proveedor usada             "
+   								,
+   	ped_fvig		date		descr "Fecha Vigencia Lista Proveedor    "
+   								,
+	ped_ftur		date		descr "Fecha de Turno de entrega Pactado "
+								,
+	ped_htur		time		descr "Hora de Turno de entrega Pactado  "
+								,
+	ped_fpre		date		descr "Fecha para la toma de precios     "
+								,
+	ped_fvencoc		date		descr "Fecha Vencimiento de Orden Compra "
+								,
+
+}
+primary key  (ped_nro)[2],
+index por_pro(ped_pro, ped_nro)[3],
+index por_fec(ped_fec),
+index por_est(ped_est, ped_nro)[2],
+index por_fen(ped_fen, ped_nro)[3],
+index por_tur(ped_ftur, ped_htur)[3],
+index por_prt(ped_pro, ped_ftur, ped_htur)[3];
+
+table movi_ped		  			descr "Movimientos de Pedidos            "
+{
+	mop_ped			num(9)		descr "Número de Pedido                  "
+								in pedidos:(ped_fec, ped_pro),
+	mop_art			num(9)		descr "Número de Artículo                "
+								not null,
+	mop_ite			num(4)		descr "Número de Item                    "
+								default 0
+								not null, 
+	mop_prec		num(9,4)	descr "Precio Unitario                   "
+								default 0
+								not null,
+	mop_cant		num(9)		descr "Cantidad                          " 
+								default 0 
+								not null,
+	mop_cantp		num(9)		descr "Cantidad de piezas                "
+								default 0
+								not null,
+	mop_iint		num(9,4)	descr "Impuesto Interno por Unidad       "
+								default 0 
+								not null,
+	mop_cfin		num(9,4)	descr "Costo Financiero                  "
+			 					default 0 
+								not null,
+	mop_recu		num(9,4)	descr "Recargo en $ por Unidad           "
+								default 0 
+								not null,
+	mop_desu		num(9,4)	descr "Descuento en $ por Unidad         "
+								default 0
+								not null,
+	mop_cosu		num(9,4)	descr "Costo por Unidad                  "
+								default 0 
+								not null,
+	mop_bon1		num(5,2)	descr "Bonificaciones y Descuentos       "
+								default 0
+								not null,
+	mop_bon2		num(5,2)	descr "Bonificaciones y Descuentos       "
+								default 0 
+								not null,
+	mop_bon3		num(5,2)	descr "Bonificaciones y Descuentos       "
+								default 0 
+								not null,
+	mop_bon4		num(5,2)	descr "Bonificaciones y Descuentos       "
+								default 0 
+								not null,
+	mop_prca		bool		descr "Marca de Precio Cambiado          "
+								default false,
+	mop_fec			date		descr "Fecha de Pedido                   "
+								,
+	mop_lle			num(5)		descr "Lleva                             "
+								,
+	mop_pag			num(5)		descr "Paga                              "
+								,
+	mop_bon5		num(5,2)	descr "Bonificaciones y Descuentos       "
+								default 0 
+								not null,
+	mop_pxcaj		num(10,2)	descr "Pesos por Cajas                   "
+								default 0.0,
+	mop_uxb			num(4)		descr "Unidad por Bulto del Artículo     "
+								,
+	mop_bon6		num(5,2)	descr "Descuento Encubierto              "
+								default 0 
+								not null,
+	mop_cosue		num(9,4)	descr "Costo por Unidad Antes de aplicar DtoEncubierto"
+								default 0 
+								not null,
+	mop_ocant		num(9)		descr "Cantidad Original                 " 
+								default 0 
+								not null,
+	mop_ocantp		num(9)		descr "Cantidad Original de piezas       "
+								default 0
+								not null,
+}
+primary key (mop_ped, mop_art, mop_ite)[15],
+index fec   (mop_fec, mop_ped, mop_art)[15],
+index obj   (mop_art, mop_fec)[10],
+index item  (mop_ped, mop_ite)[10];
+
+
+table cant_ped					descr "Cantidades por Pedidos            "
+{
+	can_ped			num(9)		descr "Número de Pedido                  "
+								in pedidos,
+	can_suc			num(2)		descr "Sucursal                          "
+								not null,
+	can_art			num(9)		descr "Artículo                          "
+								not null,
+	can_ite			num(4)		descr "Nro. de Item                      "
+								default 0 
+								not null,
+	can_cped		num(9)		descr "Cantidad Pedida                   "
+								default 0 
+								not null,
+	can_cpedp		num(9)		descr "Cantidad Pedida de piezas         "
+								default 0 
+								not null,
+	can_reb			num(9)		descr "Cantidad Recibida                 "
+	 							default 0 
+								not null,
+	can_rebp		num(9)		descr "Cantidad Recibida de piezas       "
+								default 0 
+								not null,
+	can_prec		num(9,4)	descr "Costo unitario                    "
+								default 0 
+								not null,
+	can_supm		num(9)		descr "Cantidad Supera Stock Máximo      "
+								default 0 
+								not null,
+	can_sug			num(9)		descr "Cantidad Sugerida                 "
+	 							default 0 
+								not null,
+	can_sugp		num(9)		descr "Cantidad Sugerida de piezas       "
+								default 0 
+								not null,
+	can_pped		num(9)		descr "Cantidad Pre-Pedido               "
+	 							default 0 
+								not null,
+	can_ppedp		num(9)		descr "Cantidad Pre-Pedido de piezas     "
+								default 0 
+								not null,
+	can_fen			date		descr "Fecha de Entrega                  "
+								,
+	can_incu		num(9)		descr "Cantidad Incumplida del Pedido    "
+								default 0 
+								not null,
+	can_incup 		num(9)		descr "Cantidad Incumplida de piezas  del Pedido "
+								default 0 
+								not null,
+	can_nroen		num(2)		descr "Nro de Entrega"
+								not null
+								default 1
+								,
+	can_ocped		num(9)		descr "Cantidad Original Pedida          "
+								default 0 
+								not null,
+	can_ocpedp		num(9)		descr "Cantidad Original Pedida de piezas"
+								default 0 
+								not null,
+}
+primary key   (can_ped, can_suc, can_art, can_ite)[13],
+index ped_art (can_ped, can_art, can_ite, can_suc)[13],
+index ped_fen (can_fen, can_suc, can_ped, can_art, can_ite)[15],
+index ped_suc (can_suc, can_ped, can_art, can_ite)[13],
+index can_art (can_suc, can_art, can_ped, can_ite)[13];
+
+table sucped					descr "Control de pedidos por sucursal   "
+{
+	spe_suc			num(2)		descr "Sucursal                          "
+								not null,
+	spe_art			num(9)		descr "Artículo                          "
+								not null,
+	spe_cped		num(9)		descr "Cantidad Pedida                   "
+								default 0
+								not null,
+	spe_cppie		num(9)		descr "Cantidad Pedida de piezas         "
+								default 0
+								not null,
+	spe_csug		num(9)		descr "Cantidad Sugerida                 "
+								default 0
+								not null,
+	spe_csugp		num(9)		descr "Cantidad Sugerida de piezas       "
+								default 0
+								not null,
+	spe_cpped		num(9)		descr "Cantidad Pre-Pedida               "
+								default 0
+								not null,
+	spe_cppedp		num(9)		descr "Cantidad Pre-Pedida de piezas     "
+								default 0
+								not null,
+	spe_nivr[15]	num(2)		descr "Código de Nivel de Riesgo         "
+								,
+	spe_ptje[15]	num(5)		descr "Puntaje del Nivel de  Riesgo      "
+								,
+	spe_ries		num(6)		descr "Nivel de Riesgo del Artículo      "
+								,
+	spe_habsuc		bool		descr "Habilita Sucursal?                "
+								default true
+								not null,
+	spe_csuge		num(9)		descr "Cantidad Sugerida Especial        "
+								default 0
+								not null,
+	spe_csugpe		num(9)		descr "Cantidad Sugerida de piezas Esp.  "
+								default 0
+	  							not null,
+	spe_fven		date		descr "Proximo Vencimiento"
+								,
+	spe_cdis		num(9)		descr "Cantidad a recibir x Distribucion"
+								default 0
+								not null,
+	spe_cdisp		num(9)		descr "Cantidad de piezas a recibir x distribucion "
+								default 0
+	  							not null,
+	spe_cdev		num(9)		descr "Cantidad a devolver a centro distribucion"
+								default 0
+								not null,
+	spe_cdevp		num(9)		descr "Cant en piezas a devolver al centro distribucion "
+								default 0
+	  							not null,
+	spe_cback		num(9)		descr "Cantidad en Back Order        "
+								default 0
+								not null,
+	spe_fback		date		descr "Fecha de Back Order"
+								,
+	spe_cppeda		num(9)		descr "Cantidad Pre-Pedida sin Aprobacion "
+								default 0
+								not null,
+	spe_cppedpa		num(9)		descr "Cantidad Pre-Pedida de piezas sin Aprobacion   "
+								default 0
+								not null,
+	spe_urge		bool		descr "tipo de pedido traslado"
+								default false,
+																
+}
+primary key (spe_suc, spe_art)[2],
+index art   (spe_art, spe_suc)[2],
+index ries  (spe_suc, spe_ries, spe_art)[3];
+
+
+table provart					descr "Artículos por Proveedor           "
+{
+	par_pro		num(6)			descr "Proveedor                         "
+								in proveed 
+								not null,
+	par_art		num(9)			descr "Artículo                          "
+								not null,
+	par_uxb		num(4)			descr "Unidades por bulto del proveedor  "
+								,
+	par_des		char(40)		descr "Descripcion para el proveedor     "
+								,
+	par_bon1	num(5,2)		descr "Bonificaciones y descuentos       "
+								default 0,
+	par_bon2	num(5,2)		descr "Bonificaciones y descuentos       "
+								default 0,
+	par_bon3	num(5,2)		descr "Bonificaciones y descuentos       "
+								default 0,
+	par_lle		num(5)			descr "Lleva                             "
+								,
+	par_pag		num(5)			descr "Paga                              "
+								,
+	par_cod		char(15)		descr "Código segun proveedor            "
+								,
+	par_pre		num(9,4)		descr "Precio Lista proveedor            "
+								,
+	par_desr	char(40)		descr "Descripcion real                  "
+								,
+	par_bon4	num(5,2)		descr "Bonificaciones y descuentos       "
+								default 0,
+	par_pxcaj	num(10,2)		descr "Pesos por Cajas                   "
+								default 0.0,
+	par_auxb	num(4)			descr "Unidad p/Bulto de Artículo        "
+								,
+	par_bon6	num(5,2)		descr "Descuento Encubierto              "
+								default 0,
+	par_bon5	num(5,2)		descr "Descuento Espec (lle-pag, $xCaja) "
+								default 0,
+}
+primary key  (par_pro, par_art)[2],
+unique index art(par_art, par_pro)[2],
+index descri (par_pro, par_desr)[10],
+index descrp (par_pro, par_des )[10];
+
+
+table condcomp					descr " Condiciones de Compra"
+{
+	cco_cod		num(2)			descr "Codigo de Condicion de Compra"
+								not null
+								,
+	cco_des		char(30)		descr "Descripcion"
+								,
+	cco_conc	char(3)			descr "Concepto para Admin"
+								not null
+								,
+	cco_conca	char(3)			descr "Concepto de Aplicación        "
+								,
+	cco_tipo	num(1)			descr "Tipo de Condición"
+								in (0:"Normal",1: "Extraordinaria")
+								not null
+								default 0,
+}
+primary key (cco_cod);
+
+table rprove						descr "Resultados Acumulados de Proveedores"
+{
+	rpr_anio	num(4)				descr "Anio                         "
+									,
+	rpr_mes		num(2)				descr "Mes                          "
+									,
+	rpr_prov	num(6)				descr "Código de Proveedor          "
+									,
+	rpr_vta		num(15,2)			descr "Total Importe Vendido        "
+									default 0.0
+									,
+	rpr_prep	num(15,2)			descr "Total por Precio Reposicion  "
+									default 0.0
+									,
+	rpr_pcos	num(15,2)			descr "Total por Precio Costo       "
+									default 0.0
+									,
+}
+primary key(rpr_anio, rpr_mes, rpr_prov);
+
+table contactos					descr " Contactos"
+{
+	con_cod		char(1)			descr "Codigo de Contacto"
+								not null
+								,
+	con_des		char(40)		descr "Descripcion larga"
+								not null
+								,
+	con_desr	char(20)		descr "Descripción Reducida"
+								not null
+								,
+}
+primary key (con_cod);
+
+table codcoi					descr " Código C.O.I.                   "
+{
+	coi_cod		num(2)			descr " Código                          "
+								not null
+								,
+	coi_des		char(30)		descr " Descripción                     "
+								,
+	coi_porc1	num(5,2)		descr " Porcentaje 1                    "
+								not null
+								,
+	coi_porc2	num(5,2)		descr " Porcentaje 2                    "
+								not null
+								,
+}
+primary key (coi_cod);
+
+
+table tdevol					descr "Tipos de Devoluciones             "
+{
+	tde_tdev		num(2)		descr "Tipo de Devolucion                "
+								not null,
+	tde_dtdev		char(30)	descr "Descripcion Tipo Devolucion       "
+								,
+	tde_conc		char(3)		descr "Concepto ADMIN                    "
+								not null,
+	tde_estd		char(3)		descr "Estado Destino                    "
+								,
+}
+primary key (tde_tdev);
+
+table deltat					descr "Delta T - Variacion en Fec.de Ent."
+{
+	det_pro			num(6)		descr "Número de Proveedor               "
+								not null,
+	det_suc			num(2)		descr "Sucursal                          "
+								not null,
+	det_fep			date		descr "Fecha de Entrega Programada       "
+								not null,
+	det_fer			date		descr "Fecha de Entrega Real             "
+								not null,
+	det_ped			num(9)		descr "Número de Pedido                  "
+								,
+	det_im7			num(9)		descr "Numero de IM7                     "
+								,
+	det_fec			date		descr "Fecha de Registro                 "
+								not null
+								default today,
+}
+primary key (det_suc, det_pro, det_fer, det_ped, det_im7),
+index fec (det_fec, det_suc, det_pro, det_ped, det_im7);
+
+table compro					descr "Competidores por Proveedor "
+{
+	com_pro			num(6)		descr "Código de Proveedor               "
+								not null,
+	com_com			num(6)		descr "Código de Competidor              "
+								not null,
+	com_ite			num(4)		descr "Item"
+								not null,	
+}
+primary key (com_pro,com_ite,com_com);
+
+table logsugc					descr "Log del Sugerido de Compra"
+{
+	log_suc			num(2)		descr "Sucursal"
+								not null,
+	log_art			num(9)		descr "Articulo"
+								// in articulo:(art_des)
+								not null,
+	log_diastk		num(4)		descr "Dias Stock Objetivo "
+								,
+	log_diastke		num(4)		descr "Dias para el Sugerido Especial "
+								,
+	log_bul			num(3)		descr "Unidades por Bulto"
+								,	
+	log_cminsc		num(9,3)	descr "Unidades Minimas a Sugerir para Compra"
+								,
+	log_pedpte		num(9)		descr "Cantidad Pendiente de Entrega"
+								,
+	log_ventap		num(9)		descr "Cantidad Venta en el Periodo"
+								,
+	log_diasvta		num(9)		descr "Cantidad de dias de venta en el Periodo"
+								,
+	log_prom		num(9,3)	descr "Promedio de Ventas"								
+								,
+	log_pedsug		num(9)		descr "Cantidad Sugerida Normal"
+								,
+	log_pedsuge		num(9)		descr "Cantidad Sugerida Especial"
+								,
+	log_fact		date		descr "Fecha de Actualizacion"
+								,
+	log_hact		time		descr "Hora de Actualizacion "
+								,
+	log_dquistk		num(9)		descr "Dias quiebre de Stock"
+								,
+	log_cfal		num(9,3)	descr "Cantidad Faltantes"
+								,
+	log_vtap		num(9,3)	descr "Promedio de Ventas"								
+								,
+}
+primary key (log_suc, log_art);
+
+table presucom					descr "Presupuesto de Compra"
+{
+	psc_comp		num(6)		descr "Comprador"
+								not null,
+	psc_anio		num(4)		descr "Anio"
+								not null,
+	psc_mes			num(2)		descr "Mes"
+								not null,
+	psc_vpresc		num(11,2)	descr "Presupuesto Compra"
+								not null
+								default 0,
+	psc_vpresv		num(11,2)	descr "Presupuesto Venta"
+								not null
+								default 0,
+	psc_vrec		num(11,2)	descr "Recibido"
+								not null
+								default 0,
+	psc_vppen		num(11,2)	descr "Pedidos Pendientes"
+								not null
+								default 0,
+	psc_vven		num(11,2)	descr "Ventas"
+								not null
+								default 0,
+	psc_vcosv		num(11,2)	descr "Costo"
+								not null
+								default 0,
+	psc_vrecu		num(11,2)	descr "Recuperado"
+								not null
+								default 0,
+	psc_vinv		num(11,2)	descr "Stock Valorizado"
+								not null
+								default 0,
+	psc_faut		date		descr "Fecha Ultima Actualizacion automatica"
+								,
+	psc_haut		time		descr "Hora Ultima Actualizacion automatica"
+								,
+	psc_fman		date		descr "Fecha Ultima Actualizacion Manual"
+								,
+	psc_hman		time		descr "Hora Ultima Actualizacion Manual"
+								,
+	psc_uman		char(15)	descr "Usuario Ultima Actualizacion Manual"
+								,
+}
+primary key (psc_comp, psc_anio, psc_mes);
+
+table cfacpro					descr "Cabecera Factura Proveedor p/control "
+{
+	cfp_prov		num(6)		descr "Código de Proveedor            "
+								not null
+								,
+	cfp_nrof		num(6)		descr "Numero de factura              "
+								not null
+								,
+	cfp_igra		num(15,2)	descr "Importe Grabado                "
+			 					default 0 
+								not null,
+	cfp_iret		num(15,2)	descr "Importe Retorno                "
+			 					default 0 
+								not null,
+	cfp_iiva		num(15,2)	descr "Importe Iva y otros            "
+			 					default 0 
+								not null,
+	cfp_itot		num(15,2)	descr "Importe Total                  "
+			 					default 0 
+								not null,                             
+	cfp_usua		char(10)	descr "Usuario de Ingreso             "
+								,
+   	cfp_fing		date		descr "Fecha de Ingreso               "
+   								,
+	cfp_hing		time		descr "Hora de Ingreso                "
+								,
+	cfp_ped[15]		num(9)		descr "Pedidos Incluidos              "
+								,
+}
+primary key (cfp_prov,cfp_nrof);
+
+table dfacpro					descr "Detalle Factura Proveedor p/control "
+{
+	dfp_prov		num(6)		descr "Código de Proveedor            "
+								not null
+								,
+	dfp_nrof		num(6)		descr "Numero de factura              "
+								not null
+								,
+	dfp_art			num(9)		descr "Codigo de Articulo             "
+								not null
+								,
+	dfp_canti		num(9)		descr "Cantidad Ingresada             "
+								,
+	dfp_preci		num(9,4)	descr "Precio Ingresado               "
+								,
+	dfp_ifac		num(15,2)	descr "Importe Facturadoos            "
+								,
+}
+primary key (dfp_prov,dfp_nrof, dfp_art);
+
+table logsucd					descr "Log de Datos en sucped         "
+{
+	lgd_secu		num(9)		descr "Nro de Secuencia               "
+								,
+	lgd_suc			num(2)		descr "Codigo de Sucursal             "
+								not null
+								,
+	lgd_art			num(9)		descr "Codigo de Articulo             "
+								not null
+								,
+	lgd_tipo		char(1)		descr "Tipo de Dato                   "
+								in( "D":"Distribucion",
+									"B":"Back Order",
+									"R":"Retorno x Devolucion")
+								not null
+								,
+	lgd_fnov		date		descr "Fecha Novedad                  "
+								not null
+								,
+	lgd_hnov		time		descr "Hora Novedad                   "
+								not null
+								,
+	lgd_usua		char(15)	descr "Usuario que genera Novedad     "
+								not null
+								,
+	lgd_pgm			char(15)	descr "Programa que genera Novedad    "
+								not null
+								,
+	lgd_canti		num(9)		descr "Cantidad generada              "
+								,
+}
+primary key (lgd_secu),
+index xtipo (lgd_tipo, lgd_art, lgd_suc, lgd_fnov, lgd_hnov),
+index xarti (lgd_art , lgd_suc, lgd_tipo, lgd_fnov, lgd_hnov),
+index xsucu (lgd_suc , lgd_art, lgd_tipo, lgd_fnov, lgd_hnov),
+index xfech (lgd_fnov);
+
+table afacpro		  				descr "Agrupacion p/Factura Proveedor"
+{
+	afac_prov		num(9)			descr "Codigo de Proveedor           "
+							  		not null,
+	afac_ver		num(5)			descr "Codigo Version del Proveedor  "
+							  		not null,
+	afac_ped		num(9)			descr "Numero de Orden de Compra     "
+							  		not null,
+	afac_suc		num(2)			descr "Código de Sucursal Ingreso    "
+							  		default $codsuc
+							  		not null,
+	afac_tip		char(2)			descr "Tipo de Comprobante Ingreso   "
+									not null,
+	afac_stip		num(2)	  		descr "Subtipo de Comprobante Ingreso"
+									not null,
+	afac_nro		num(9)			descr "Número de movimiento Ingreso  "
+							  		not null
+							 		,
+}
+primary key ( afac_prov, afac_ver, afac_ped, afac_suc, afac_tip, afac_stip, afac_nro );
+
